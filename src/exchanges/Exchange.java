@@ -55,11 +55,17 @@ public abstract class Exchange implements Runnable {
     }
 
 
-    protected void updateMarketData() throws IOException {
+    protected void updateMarketData() {
         for (String pairName : getPairs()) {
             String request = buildAPIRequest(pairName);
-            Pair pair = createPair(pairName, ConnectionManager.readJSONFromRequest(request), request);
-            getMarket().put(pair.getPairName(), pair);
+            JSONObject json = ConnectionManager.readJSONFromRequest(request);
+            if(json != null) {
+                Pair pair = createPair(pairName, json, request);
+                getMarket().put(pair.getPairName(), pair);
+            }
+            else{
+                System.out.println(getClass().getName() + ": unable to get data for pair: " + pairName);
+            }
         }
         validateMarket(getMarket());
     }

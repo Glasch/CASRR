@@ -22,37 +22,49 @@ public class Route {
         this.pairName = pairName;
         this.exchangeFrom = exchangeFrom;
         this.exchangeTo = exchangeTo;
-        this.deals = findDeals(this);
-        this.sortedEVDeals = filterDeals(deals);
-        this.routeValue = findRouteValue(sortedEVDeals);
+        this.deals = findDeals();
+        this.sortedEVDeals = filterDeals();
+        this.routeValue = findRouteValue();
     }
 
-    private BigDecimal findRouteValue(ArrayList <Deal> sortedEVDeals) {
+    private BigDecimal findRouteValue() {
+//        applyDeals();
         BigDecimal routeValue = null;
 
         return routeValue;
     }
 
-    private ArrayList <Deal> filterDeals(ArrayList <Deal> deals) {
+//    private void applyDeals() {
+//        for (int i = 0; i < sortedEVDeals.size(); i++) {
+//            Deal deal = sortedEVDeals.get(i);
+//            for (int j = i+1; j < sortedEVDeals.size(); j++) {
+//                Deal nextDeal = sortedEVDeals.get(j);
+//                nextDeal.setBidFrom(nextDeal.getBidFrom().subtract(deal.getEffectiveAmount()));
+//                nextDeal.setAskTo(nextDeal.getAskTo().subtract(deal.getEffectiveAmount()));
+//                nextDeal.
+//            }
+//        }
+//        for (Deal deal : sortedEVDeals) {
+//        }
+//
+//    }
+
+    private ArrayList <Deal> filterDeals() {
         ArrayList <Deal> sortedEVDeals = new ArrayList <>();
         for (Deal deal : deals) {
-            if (deal.getSpread().compareTo(BigDecimal.ZERO) == 1) {
+            if (deal.getSpread().compareTo(BigDecimal.ZERO) > 0) {
                 sortedEVDeals.add(deal);
             }
         }
-        sortedEVDeals.sort((o1, o2) -> {
-            BigDecimal bigDecimal1 = o1.getSpread();
-            BigDecimal bigDecimal2 = o2.getSpread();
-            return bigDecimal2.compareTo(bigDecimal1);
-        });
+        sortedEVDeals.sort((o1, o2) -> o2.getSpread().compareTo(o1.getSpread()));
         return sortedEVDeals;
     }
 
-    private ArrayList <Deal> findDeals(Route route) throws IOException {
+    private ArrayList <Deal> findDeals() throws IOException {
         ArrayList <Deal> deals = new ArrayList <>();
-        for (Order orderFrom : route.getExchangeFrom().getMarket().get(route.getPairName()).getOrders(OrderType.BID)) {
-            for (Order orderTo : route.getExchangeTo().getMarket().get(route.getPairName()).getOrders(OrderType.ASK)) {
-                deals.add(new Deal(route, orderFrom.getPrice(), orderTo.getPrice(), orderFrom.getAmount(), orderTo.getAmount()));
+        for (Order orderFrom : getExchangeFrom().getMarket().get(getPairName()).getOrders(OrderType.BID)) {
+            for (Order orderTo : getExchangeTo().getMarket().get(getPairName()).getOrders(OrderType.ASK)) {
+                deals.add(new Deal(this, orderFrom.getPrice(), orderTo.getPrice(), orderFrom.getAmount(), orderTo.getAmount()));
             }
         }
         return deals;

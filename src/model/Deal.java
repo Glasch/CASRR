@@ -24,15 +24,14 @@ public class Deal {
         this.askTo = askTo;
         this.amountFrom = amountFrom;
         this.amountTo = amountTo;
-        this.effectiveAmount = (amountTo.compareTo(amountFrom) == 1) ? amountFrom : amountTo;
+        this.effectiveAmount = (amountTo.compareTo(amountFrom) > 0) ? amountFrom : amountTo;
         this.spread = calcSpread(this);
         this.valueInDollars = calcValueInDollars(this);
     }
 
-    private BigDecimal calcValueInDollars(Deal deal) throws IOException {
-        BigDecimal valueInDollars;
-        UsdConverter converter = new UsdConverter();
-        valueInDollars = converter.convert(deal.getRoute().getPairName(), deal.getEffectiveAmount()
+    private BigDecimal calcValueInDollars(Deal deal) {
+        UsdConverter converter =  UsdConverter.getInstance();
+        BigDecimal valueInDollars = converter.convert(deal.getRoute().getPairName(), deal.getEffectiveAmount()
                 .multiply(deal.getAskTo())).multiply(deal.getSpread().divide(BigDecimal.valueOf(100)));
         return valueInDollars;
     }
@@ -70,5 +69,13 @@ public class Deal {
         return "BidFrom/amount: " + this.bidFrom + " " + this.amountFrom + " AskTo/amount: " + this.askTo
                 + " " + this.amountTo + " Value: " + this.spread + " Effective Amount: " + this.effectiveAmount
                 + " Value in $: " + this.valueInDollars;
+    }
+
+    public void setBidFrom(BigDecimal bidFrom) {
+        this.bidFrom = bidFrom;
+    }
+
+    public void setAskTo(BigDecimal askTo) {
+        this.askTo = askTo;
     }
 }

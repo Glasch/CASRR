@@ -1,13 +1,16 @@
- package services;
+package services;
 
- import org.json.JSONObject;
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.StatusLine;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.util.EntityUtils;
+import org.json.JSONObject;
 
- import java.io.BufferedReader;
- import java.io.IOException;
- import java.io.InputStream;
- import java.io.InputStreamReader;
- import java.net.URL;
- import java.net.URLConnection;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Copyright (c) Anton on 17.10.2018.
@@ -15,22 +18,36 @@
 
 public class ConnectionManager {
 
-    public static JSONObject readJSONFromRequest(String request) throws IOException {
-        StringBuilder jsonText;
-        jsonText = new StringBuilder();
-        URL url = new URL(request);
-        URLConnection connection = url.openConnection();
-        connection.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36" +
+    public static JSONObject readJSONFromRequest(String requestString) {
+        Logger.getLogger("org.apache").setLevel(Level.OFF);
+
+        HttpClientBuilder builder = HttpClientBuilder.create();
+        HttpClient client = builder.build();
+
+        HttpGet request = new HttpGet(requestString);
+        request.addHeader("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36" +
                 " (KHTML, like Gecko) Chrome/28.0.1500.29 Safari/537.36");
-        InputStream is;
-        is = connection.getInputStream();
-        BufferedReader reader = new BufferedReader(new InputStreamReader(is));
-        String line;
-        while ((line = reader.readLine()) != null) {
-            jsonText.append(line);
+        HttpResponse response;
+        JSONObject jsonObject;
+        try {
+            response = client.execute(request);
+            HttpEntity entity = response.getEntity();
+            jsonObject = new JSONObject(EntityUtils.toString(entity));
+            StatusLine statusLine = response.getStatusLine();
+            if (statusLine.getStatusCode() != 200) {
+                System.out.println("Bad response: " + statusLine.getStatusCode() + " " + statusLine.getReasonPhrase());
+                System.out.println("Request: " + requestString);
+                return null;
+            }
+        } catch (Exception e) {
+            System.out.println("Could not get response: " + e.getMessage());
+            System.out.println("Request: " + requestString);
+            return null;
         }
-        reader.close();
-        return new JSONObject(jsonText.toString());
+        return jsonObject;
     }
+
 }
+
+
 

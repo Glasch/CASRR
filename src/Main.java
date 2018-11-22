@@ -1,6 +1,7 @@
 import model.Route;
 import model.Router;
 import services.Updater;
+import services.UsdConverter;
 
 import java.io.IOException;
 
@@ -13,10 +14,10 @@ public class Main {
         Updater updater = Updater.getInstance();
         updater.update();
         Router router = new Router(updater);
-        updater.update();
         for (Route route : router.getRoutes()) {
             if (!route.getSortedEVDeals().isEmpty()) {
-                System.out.println(route.getPairName() + " " + route.getExchangeFrom() + " " + route.getExchangeTo() + " " + route.getSortedEVDeals());
+                System.out.println(route.getPairName() + " " + route.getExchangeFrom() + " " + route.getExchangeTo() +
+                        " " + route.getSortedEVDeals());
             }
         }
     }

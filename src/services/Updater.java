@@ -36,15 +36,23 @@ public class Updater {
 
     public static Updater getInstance() {
         if(instance == null){
-            return new Updater();
-        }else
+            instance = new Updater();
+        }
         return instance;
     }
 
     public void update() throws InterruptedException {
+        UsdConverter converter = UsdConverter.getInstance();
+        converter.loadData();
+
+        for (Exchange exchange : exchanges) {
+            futures.add(executorService.submit(exchange));
+        }
+
+        waitAllFutures(futures);
+
         for (Iterator<Exchange> iterator = exchanges.iterator(); iterator.hasNext(); ) {
             Exchange exchange = iterator.next();
-            futures.add(executorService.submit(exchange));
             if(!exchange.isMarketValid()) {
                 System.out.println("Exchange is not valid and was removed: " + exchange + ", error: " + exchange.getLastError());
                 iterator.remove();
@@ -54,7 +62,6 @@ public class Updater {
             }
         }
 
-        waitAllFutures(futures);
         futures.clear();
     }
 
