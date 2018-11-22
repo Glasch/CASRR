@@ -1,8 +1,8 @@
 package model;
 
 import exchanges.Exchange;
+import services.UsdConverter;
 
-import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 
@@ -15,39 +15,41 @@ public class Route {
     private Exchange exchangeTo;
     private ArrayList <Deal> deals;
     private ArrayList <Deal> sortedEVDeals;
-    private BigDecimal routeValue;
+    private BigDecimal routeValueInDollars;
 
 
-    public Route(String pairName, Exchange exchangeFrom, Exchange exchangeTo) throws IOException {
+    public Route(String pairName, Exchange exchangeFrom, Exchange exchangeTo) {
         this.pairName = pairName;
         this.exchangeFrom = exchangeFrom;
         this.exchangeTo = exchangeTo;
         this.deals = findDeals();
         this.sortedEVDeals = filterDeals();
-        this.routeValue = findRouteValue();
+        calcRouteValueInDollars();
     }
 
-    private BigDecimal findRouteValue() {
-//        applyDeals();
-        BigDecimal routeValue = null;
+    private void calcRouteValueInDollars() {
+        resetRemainingAmounts();
+        applyDeals();
 
-        return routeValue;
+        routeValueInDollars = BigDecimal.ZERO;
+        for (Deal each : sortedEVDeals) {
+            routeValueInDollars = routeValueInDollars.add(each.getValueInDollars());
+        }
     }
 
-//    private void applyDeals() {
-//        for (int i = 0; i < sortedEVDeals.size(); i++) {
-//            Deal deal = sortedEVDeals.get(i);
-//            for (int j = i+1; j < sortedEVDeals.size(); j++) {
-//                Deal nextDeal = sortedEVDeals.get(j);
-//                nextDeal.setBidFrom(nextDeal.getBidFrom().subtract(deal.getEffectiveAmount()));
-//                nextDeal.setAskTo(nextDeal.getAskTo().subtract(deal.getEffectiveAmount()));
-//                nextDeal.
-//            }
-//        }
-//        for (Deal deal : sortedEVDeals) {
-//        }
-//
-//    }
+    private void resetRemainingAmounts() {
+        for (Deal deal : deals) {
+            deal.getAsk().resetRemainingAmount();
+            deal.getBid().resetRemainingAmount();
+        }
+    }
+
+    private void applyDeals() {
+        for (Deal deal : sortedEVDeals) {
+            deal.refreshEffectiveAmount();
+            deal.subtractEffectiveAmount();
+        }
+    }
 
     private ArrayList <Deal> filterDeals() {
         ArrayList <Deal> sortedEVDeals = new ArrayList <>();
@@ -60,11 +62,11 @@ public class Route {
         return sortedEVDeals;
     }
 
-    private ArrayList <Deal> findDeals() throws IOException {
+    private ArrayList <Deal> findDeals(){
         ArrayList <Deal> deals = new ArrayList <>();
         for (Order orderFrom : getExchangeFrom().getMarket().get(getPairName()).getOrders(OrderType.BID)) {
             for (Order orderTo : getExchangeTo().getMarket().get(getPairName()).getOrders(OrderType.ASK)) {
-                deals.add(new Deal(this, orderFrom.getPrice(), orderTo.getPrice(), orderFrom.getAmount(), orderTo.getAmount()));
+                deals.add(new Deal(this, orderFrom, orderTo));
             }
         }
         return deals;
@@ -84,5 +86,9 @@ public class Route {
 
     public Exchange getExchangeTo() {
         return exchangeTo;
+    }
+
+    public BigDecimal getRouteValueInDollars() {
+        return routeValueInDollars;
     }
 }

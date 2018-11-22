@@ -10,46 +10,44 @@ import java.math.BigDecimal;
  */
 public class Deal {
     private Route route;
-    private BigDecimal bidFrom;
-    private BigDecimal askTo;
-    private BigDecimal amountFrom;
-    private BigDecimal amountTo;
+    private Order bid; //from
+    private Order ask; //to
     private BigDecimal effectiveAmount;
     private BigDecimal spread;
     private BigDecimal valueInDollars;
 
-    public Deal(Route route, BigDecimal bidFrom, BigDecimal askTo, BigDecimal amountFrom, BigDecimal amountTo) throws IOException {
+    public Deal(Route route, Order bid, Order ask) {
         this.route = route;
-        this.bidFrom = bidFrom;
-        this.askTo = askTo;
-        this.amountFrom = amountFrom;
-        this.amountTo = amountTo;
-        this.effectiveAmount = (amountTo.compareTo(amountFrom) > 0) ? amountFrom : amountTo;
-        this.spread = calcSpread(this);
-        this.valueInDollars = calcValueInDollars(this);
+        this.bid = bid;
+        this.ask = ask;
+        refreshEffectiveAmount();
     }
 
-    private BigDecimal calcValueInDollars(Deal deal) {
+    void refreshEffectiveAmount() {
+        BigDecimal askAmount = ask.getRemainingAmount();
+        BigDecimal bidAmount = bid.getRemainingAmount();
+        this.effectiveAmount = (askAmount.compareTo(bidAmount) > 0) ? bidAmount : askAmount;
+        if(effectiveAmount.compareTo(BigDecimal.ZERO) <= 0) effectiveAmount = BigDecimal.ZERO;
+        this.spread = calcSpread();
+        this.valueInDollars = calcValueInDollars();
+    }
+
+    void subtractEffectiveAmount(){
+        ask.subtractRemainingAmount(effectiveAmount);
+    }
+
+    private BigDecimal calcValueInDollars() {
         UsdConverter converter =  UsdConverter.getInstance();
-        BigDecimal valueInDollars = converter.convert(deal.getRoute().getPairName(), deal.getEffectiveAmount()
-                .multiply(deal.getAskTo())).multiply(deal.getSpread().divide(BigDecimal.valueOf(100)));
+        BigDecimal valueInDollars = converter.convert(route.getPairName(), effectiveAmount
+                .multiply(ask.getPrice())).multiply(spread.divide(BigDecimal.valueOf(100)));
         return valueInDollars;
     }
 
-    private BigDecimal calcSpread(Deal deal) {
-        BigDecimal value = null;
-        value = ((deal.getBidFrom().subtract(deal.getAskTo())).divide(deal.getBidFrom(),
+    private BigDecimal calcSpread() {
+        BigDecimal value = ((bid.getPrice().subtract(ask.getPrice())).divide(bid.getPrice(),
                 4,
                 BigDecimal.ROUND_HALF_UP).multiply(BigDecimal.valueOf(100)));
         return value;
-    }
-
-    public BigDecimal getBidFrom() {
-        return bidFrom;
-    }
-
-    public BigDecimal getAskTo() {
-        return askTo;
     }
 
     public BigDecimal getEffectiveAmount() {
@@ -64,18 +62,22 @@ public class Deal {
         return spread;
     }
 
+    public Order getBid() {
+        return bid;
+    }
+
+    public Order getAsk() {
+        return ask;
+    }
+
+    public BigDecimal getValueInDollars() {
+        return valueInDollars;
+    }
+
     @Override
     public String toString() {
-        return "BidFrom/amount: " + this.bidFrom + " " + this.amountFrom + " AskTo/amount: " + this.askTo
-                + " " + this.amountTo + " Value: " + this.spread + " Effective Amount: " + this.effectiveAmount
-                + " Value in $: " + this.valueInDollars;
-    }
-
-    public void setBidFrom(BigDecimal bidFrom) {
-        this.bidFrom = bidFrom;
-    }
-
-    public void setAskTo(BigDecimal askTo) {
-        this.askTo = askTo;
+        return "BidFrom/amount: " + bid.getPrice() + " " + bid.getAmount() + " AskTo/amount: " + ask.getPrice()
+                + " " + ask.getAmount() + " Value: " + spread + " Effective Amount: " + effectiveAmount
+                + " Value in $: " + valueInDollars;
     }
 }
