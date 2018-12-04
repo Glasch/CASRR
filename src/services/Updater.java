@@ -3,7 +3,10 @@ package services;
 import exchanges.*;
 import model.Router;
 
+import java.sql.Timestamp;
+import java.time.Instant;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
@@ -17,11 +20,13 @@ import java.util.concurrent.Future;
 
 public class Updater {
  private static Updater instance;
+ private static Date timestamp;
  private ArrayList<Exchange> exchanges = new ArrayList <>();
  private ExecutorService executorService = Executors.newCachedThreadPool();
  private List<Future> futures = new ArrayList<>();
 
   private Updater() {
+
         exchanges.add(new Binance());
         exchanges.add(new Bitfinex());
         exchanges.add(new Bittrex());
@@ -62,6 +67,7 @@ public class Updater {
             }
         }
 
+        timestamp = new Date();
         futures.clear();
     }
 
@@ -78,4 +84,6 @@ public class Updater {
     public ArrayList <Exchange> getExchanges() {
         return exchanges;
     }
+
+    public static Date getTimestamp() { return timestamp; }
 }

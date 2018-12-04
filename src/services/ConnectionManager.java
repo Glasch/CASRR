@@ -9,6 +9,9 @@ import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.util.EntityUtils;
 import org.json.JSONObject;
 
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -46,6 +49,12 @@ public class ConnectionManager {
         }
         return jsonObject;
     }
+
+    public static Connection getDBconnection(String url, String login, String password) throws SQLException, ClassNotFoundException {
+        Class.forName("org.postgresql.Driver");
+        return DriverManager.getConnection(url, login, password);
+    }
+
 
 }
 

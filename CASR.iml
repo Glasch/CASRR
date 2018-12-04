@@ -10,5 +10,7 @@
     <orderEntry type="library" name="org.json:json:20180813" level="project" />
     <orderEntry type="library" name="org.apache.httpcomponents:httpclient:4.5.6" level="project" />
     <orderEntry type="library" name="org.apache.httpcomponents:httpcore:4.4.10" level="project" />
+    <orderEntry type="library" name="com.microsoft.sqlserver:mssql-jdbc:7.1.2.jre11-preview" level="project" />
+    <orderEntry type="library" name="postgresql:postgresql:9.1-901-1.jdbc4" level="project" />
   </component>
 </module>
