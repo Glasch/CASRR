@@ -15,8 +15,8 @@ import java.util.ArrayList;
 public class DBManager {
     Updater updater;
     private String url = "jdbc:postgresql://localhost:5432/cas";
-    private String login = "postgres";
-    private String password = "postgrespass";
+    private String login = "root";
+    private String password = "root";
 
     public DBManager(Updater updater) {
         this.updater = updater;

@@ -13,9 +13,9 @@ import java.util.Set;
  * Copyright (c) Anton on 17.11.2018.
  */
 public class Router {
-    ArrayList <Exchange> exchanges;
-    Set <String> allPairs = new HashSet <>();
-    ArrayList <Route> routes = new ArrayList <>();
+    ArrayList<Exchange> exchanges;
+    Set<String> allPairs = new HashSet<>();
+    ArrayList<Route> routes = new ArrayList<>();
 
     public Router(Updater updater) throws InterruptedException, IOException {
         exchanges = updater.getExchanges();
@@ -26,11 +26,11 @@ public class Router {
         this.routes = findRoutes(exchanges, allPairs);
     }
 
-    private ArrayList <Route> findRoutes(ArrayList <Exchange> exchanges, Set <String> allPairs) throws IOException {
-        ArrayList <Route> routes = new ArrayList <>();
-        for (Exchange exchangeFrom : exchanges) {
-            for (Exchange exchangeTo : exchanges) {
-                for (String pairName : allPairs) {
+    private ArrayList<Route> findRoutes(ArrayList<Exchange> exchanges, Set<String> allPairs) throws IOException {
+        ArrayList<Route> routes = new ArrayList<>();
+        for (String pairName : allPairs) {
+            for (Exchange exchangeFrom : exchanges) {
+                for (Exchange exchangeTo : exchanges) {
                     if (exchangeFrom.getMarket().containsKey(pairName) &&
                             exchangeTo.getMarket().containsKey(pairName)) {
                         routes.add(new Route(pairName, exchangeFrom, exchangeTo));
@@ -41,15 +41,15 @@ public class Router {
         return routes;
     }
 
-    public Set <String> getAllPairs() {
+    public Set<String> getAllPairs() {
         return allPairs;
     }
 
-    public ArrayList <Exchange> getExchanges() {
+    public ArrayList<Exchange> getExchanges() {
         return exchanges;
     }
 
-    public ArrayList <Route> getRoutes() {
+    public ArrayList<Route> getRoutes() {
         return routes;
     }
 }
