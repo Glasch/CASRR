@@ -1,12 +1,7 @@
-import model.Route;
 import model.Router;
-import services.ConnectionManager;
 import services.DBManager;
+import model.Trader;
 import services.Updater;
-
-import java.io.IOException;
-import java.sql.DriverManager;
-import java.sql.SQLException;
 
 /**
  * Copyright (c) Anton on 17.11.2018.
@@ -17,21 +12,16 @@ public class Main {
         Updater updater = Updater.getInstance();
         DBManager dbManager = new DBManager(updater);
         dbManager.saveStaticData();
-        updater.update();
-        dbManager.saveOrders();
         while (true) {
             updater.update();
+            dbManager.saveOrders();
             Router router = new Router(updater);
-            System.out.println(Updater.getTimestamp());
-        for (Route route : router.getRoutes()) {
-            if (!route.getSortedEVDeals().isEmpty()) {
-                System.out.println("----------ROUTE-----------------------------");
-                System.out.println(route.getPairName() + " " + route.getExchangeFrom() + " " + route.getExchangeTo() +
-                        " " + route.getSortedEVDeals());
-                System.out.println("----------ROUTE VALUE: " + route.getRouteValueInDollars() + "\n");
-            }
-        }
+            Trader trader = new Trader(router);
+            trader.calcValueInDollars();
+            System.out.println();
         }
     }
+
+    // TODO: 06.12.2018 Писать нормальную дату в базу, сохраняться массивы в базу, попробывать закончить Trader
 }
 

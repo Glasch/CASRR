@@ -27,7 +27,7 @@ public class Route {
         calcRouteValueInDollars();
     }
 
-    private void calcRouteValueInDollars() {
+    public void calcRouteValueInDollars() {
         resetRemainingAmounts();
         applyDeals();
 

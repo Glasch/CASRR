@@ -8,7 +8,6 @@ import org.postgresql.util.PSQLException;
 import java.math.BigDecimal;
 import java.sql.*;
 import java.util.ArrayList;
-import java.util.TimeZone;
 
 /**
  * Copyright (c) Anton on 03.12.2018.
@@ -43,30 +42,34 @@ public class DBManager {
                         ResultSet marketResSet = getMarketResultSet(connection, exchangeID, pairID);
                         if (marketResSet.next()) {
                             Integer marketId = marketResSet.getInt("id");
-                            for (Order orderBid : exchange.getMarket().get(pairName).getOrders(OrderType.BID)) {
-                                BigDecimal bidPrice = orderBid.getPrice();
-                                BigDecimal bidAmount = orderBid.getAmount();
-                                for (Order orderAsk : exchange.getMarket().get(pairName).getOrders(OrderType.ASK)) {
-                                    BigDecimal askPrice = orderAsk.getPrice();
-                                    BigDecimal askAmount = orderAsk.getAmount();
-                                    String sql = "INSERT INTO \"order\" (market_id, bid_price, bid_amount, ask_price, ask_amount, timestamp) VALUES (?, ?, ?, ?, ?, ?) ";
-                                    PreparedStatement statement = connection.prepareStatement(sql);
-                                    statement.setInt(1, marketId);
-                                    statement.setBigDecimal(2, bidPrice);
-                                    statement.setBigDecimal(3, bidAmount);
-                                    statement.setBigDecimal(4, askPrice);
-                                    statement.setBigDecimal(5,askAmount);
-                                    statement.setObject(6, new java.sql.Date(Updater.getTimestamp().getTime()));
-                                    statement.executeUpdate();
-                                }
+                            for (Order order : exchange.getMarket().get(pairName).getOrders(OrderType.BID)) {
+                                saveOrder(connection, marketId, order, OrderType.BID);
+                            }
+                            for (Order order : exchange.getMarket().get(pairName).getOrders(OrderType.ASK)) {
+                                saveOrder(connection, marketId, order, OrderType.ASK);
                             }
                         }
+
                     }
                 }
             }
         }
         connection.close();
     }
+
+    private void saveOrder(Connection connection, Integer marketId, Order order, OrderType type) throws SQLException {
+        BigDecimal price = order.getPrice();
+        BigDecimal amount = order.getAmount();
+        String sql = "INSERT INTO \"order\" (market_id, type, price, amount, timestamp) VALUES (?, ?::order_type, ?, ?, ?) ";
+        PreparedStatement statement = connection.prepareStatement(sql);
+        statement.setInt(1, marketId);
+        statement.setString( 2, type.toString());
+        statement.setBigDecimal(3, price);
+        statement.setBigDecimal(4, amount);
+        statement.setObject(5, new Date(Updater.getTimestamp().getTime()));
+        statement.executeUpdate();
+    }
+
 
     private void saveMarket(Connection connection) throws SQLException {
         for (Exchange exchange : Updater.getInstance().getExchanges()) {

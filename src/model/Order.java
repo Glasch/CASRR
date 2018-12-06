@@ -38,4 +38,8 @@ public class Order {
     public void subtractRemainingAmount(BigDecimal amount) {
         remainingAmount = remainingAmount.subtract(amount);
     }
+
+    public void setAmount(BigDecimal amount) {
+        this.amount = amount;
+    }
 }

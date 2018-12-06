@@ -80,4 +80,10 @@ public class Deal {
                 + " " + ask.getAmount() + " Value: " + spread + " Effective Amount: " + effectiveAmount
                 + " Value in $: " + valueInDollars;
     }
+
+    public void setEffectiveAmount(BigDecimal effectiveAmount) {
+        this.effectiveAmount = effectiveAmount;
+    }
+
+
 }

@@ -25,8 +25,8 @@ public class Updater {
  private ExecutorService executorService = Executors.newCachedThreadPool();
  private List<Future> futures = new ArrayList<>();
 
-  private Updater() {
 
+  private Updater() {
         exchanges.add(new Binance());
         exchanges.add(new Bitfinex());
         exchanges.add(new Bittrex());
