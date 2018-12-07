@@ -49,7 +49,10 @@ public class Poloniex extends Exchange implements Runnable {
             JSONArray jsonObject1 = jsonObject.getJSONArray(getJSONKey(type));
             if (jsonObject1.length() < limit) limit = jsonObject1.length();
             for (int i = 0; i < limit; i++) {
-                orders.add(new Order(new BigDecimal(jsonObject1.getJSONArray(i).getString(0)), jsonObject1.getJSONArray(i).getBigDecimal(1)));
+                JSONArray orderLine = jsonObject1.getJSONArray(i);
+                orders.add(new Order(this,
+                        orderLine.getBigDecimal(0),
+                        orderLine.getBigDecimal(1)));
             }
             return orders;
 

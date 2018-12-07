@@ -67,7 +67,7 @@ public class Bittrex extends Exchange implements Runnable {
             for (int i = 0; i < limit; i++) {
                 if (jsonObject1.getJSONArray(getJSONKey(type)).length() < limit)
                     limit = jsonObject1.getJSONArray(getJSONKey(type)).length();
-                orders.add(new Order(jsonObject1.getJSONArray(getJSONKey(type)).getJSONObject(i)
+                orders.add(new Order(this, jsonObject1.getJSONArray(getJSONKey(type)).getJSONObject(i)
                         .getBigDecimal("Rate"), jsonObject1.getJSONArray(getJSONKey(type))
                         .getJSONObject(i).getBigDecimal("Quantity")));
             }

@@ -1,21 +1,25 @@
 package model;
 
+import exchanges.Exchange;
 import services.Updater;
 
 import java.math.BigDecimal;
 import java.util.Date;
 
 public class Order {
+    private static int lastId = 1;
+
+    private int id = lastId++;
+    private Exchange exchange;
     private BigDecimal price;
     private BigDecimal amount;
-    private Date timestamp;
 
     private BigDecimal remainingAmount;
 
-    public Order(BigDecimal price, BigDecimal amount) {
+    public Order(Exchange exchange, BigDecimal price, BigDecimal amount) {
+        this.exchange = exchange;
         this.price = price;
         this.amount = amount;
-        this.timestamp = Updater.getTimestamp();
         resetRemainingAmount();
     }
 
@@ -41,5 +45,20 @@ public class Order {
 
     public void setAmount(BigDecimal amount) {
         this.amount = amount;
+    }
+
+    public Exchange getExchange() {
+        return exchange;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    @Override
+    public String toString() {
+        BigDecimal div = amount.subtract(remainingAmount).divide(amount, BigDecimal.ROUND_HALF_UP);
+        Long percentUsed = Math.round(div.doubleValue()*100);
+        return "O-"+id + " P: " + price + " A: " + amount + " U: " + percentUsed + "%";
     }
 }

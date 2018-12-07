@@ -34,6 +34,7 @@ public class Deal {
 
     void subtractEffectiveAmount(){
         ask.subtractRemainingAmount(effectiveAmount);
+        bid.subtractRemainingAmount(effectiveAmount);
     }
 
     private BigDecimal calcValueInDollars() {
@@ -76,8 +77,7 @@ public class Deal {
 
     @Override
     public String toString() {
-        return "BidFrom/amount: " + bid.getPrice() + " " + bid.getAmount() + " AskTo/amount: " + ask.getPrice()
-                + " " + ask.getAmount() + " Value: " + spread + " Effective Amount: " + effectiveAmount
+        return "Bid: " + bid + " Ask: " + ask + ". Effective Amount: " + effectiveAmount
                 + " Value in $: " + valueInDollars;
     }
 

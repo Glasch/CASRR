@@ -9,8 +9,7 @@ import java.util.HashMap;
  */
 public class Trader {
     private Router router;
-    private ArrayList<Route> tradeRoutes;
-    private BigDecimal valueInDollars;
+    private BigDecimal totalValueInDollars;
 
 
     public Trader(Router router) {
@@ -18,33 +17,29 @@ public class Trader {
     }
 
     public void calcValueInDollars() {
-        ArrayList<Route> routerRoutes = router.getRoutes();
-        HashMap<String, Route> masterRoutes = new HashMap<>();
-        for (Route route : routerRoutes) {
-            String pairName = route.getPairName();
-            Route master = masterRoutes.get(pairName);
-            if (master == null) {
-                master = new Route(pairName);
-                masterRoutes.put(pairName,master);
-            }
-            master.addDeals(route.getSortedEVDeals());
-        }
-        for (Route route : masterRoutes.values()) {
-            route.filterDeals();
-            route.calcRouteValueInDollars();
-        }
-        for (Route route : routerRoutes) {
-            route.filterZeroAmountDeals();
+        System.out.println("-------------MASTER ROUTES------------------");
+        for (Route route : router.getMasterRoutes()) {
             if (route.getSortedEVDeals().isEmpty()) continue;
-
-            System.out.println("-------------------------------------------------");
-            System.out.println(route);
-            for (Deal deal : route.getSortedEVDeals() ) {
-                System.out.println(deal);
-            }
-            System.out.println("----------------------------------------------");
+            printRoute(route);
         }
-        System.out.println();
+        System.out.println("-------------INDIVIDUAL ROUTES------------------");
+        totalValueInDollars = BigDecimal.ZERO;
+        for (Route route : router.getResultingRoutes()) {
+            if (route.getSortedEVDeals().isEmpty()) continue;
+            printRoute(route);
+            totalValueInDollars = totalValueInDollars.add(route.getRouteValueInDollars());
+        }
+        System.out.println("WE WILL GET RICHER BY: " + totalValueInDollars);
+
+    }
+
+    private void printRoute(Route route) {
+//        System.out.println("-------------------------------------------------");
+        System.out.println(route);
+        for (Deal deal : route.getSortedEVDeals() ) {
+            System.out.println(deal);
+        }
+        System.out.println("----------------------------------------------");
     }
 }
 

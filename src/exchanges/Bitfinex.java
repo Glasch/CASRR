@@ -57,12 +57,12 @@ public class Bitfinex extends Exchange implements Runnable {
                 if ("bids".equals(getJSONKey(type))) {
                     if (jsonObject.getJSONArray("bids").length() < limit)
                         limit = jsonObject.getJSONArray("bids").length();
-                    orders.add(new Order(new BigDecimal(jsonObject.getJSONArray("bids").getJSONObject(i).getString("price")),
+                    orders.add(new Order(this, new BigDecimal(jsonObject.getJSONArray("bids").getJSONObject(i).getString("price")),
                             new BigDecimal(jsonObject.getJSONArray("bids").getJSONObject(i).getString("amount"))));
                 } else {
                     if (jsonObject.getJSONArray("asks").length() < limit)
                         limit = jsonObject.getJSONArray("asks").length();
-                    orders.add(new Order(new BigDecimal(jsonObject.getJSONArray("asks").getJSONObject(i).getString("price")),
+                    orders.add(new Order(this, new BigDecimal(jsonObject.getJSONArray("asks").getJSONObject(i).getString("price")),
                             new BigDecimal(jsonObject.getJSONArray("asks").getJSONObject(i).getString("amount"))));
                 }
             }

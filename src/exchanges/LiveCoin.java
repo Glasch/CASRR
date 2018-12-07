@@ -39,7 +39,7 @@ public class LiveCoin extends Exchange implements Runnable {
             JSONArray jsonObject1 = jsonObject.getJSONArray(getJSONKey(type));
             if (jsonObject1.length() < limit) limit = jsonObject1.length();
             for (int i = 0; i < limit; i++) {
-                orders.add(new Order(new BigDecimal(jsonObject1.getJSONArray(i).getString(0)), new BigDecimal(jsonObject1.getJSONArray(i).getString(1))));
+                orders.add(new Order(this, new BigDecimal(jsonObject1.getJSONArray(i).getString(0)), new BigDecimal(jsonObject1.getJSONArray(i).getString(1))));
             }
             return orders;
 

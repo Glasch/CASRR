@@ -16,40 +16,33 @@ public class Route {
     private Exchange exchangeFrom;
     private Exchange exchangeTo;
     private ArrayList <Deal> deals;
-    private ArrayList <Deal> sortedEVDeals;
     private BigDecimal routeValueInDollars;
-
-
-    public Route(String pairName, Exchange exchangeFrom, Exchange exchangeTo) {
-        this.pairName = pairName;
-        this.exchangeFrom = exchangeFrom;
-        this.exchangeTo = exchangeTo;
-        this.deals = findDeals();
-        filterDeals();
-        calcRouteValueInDollars();
-    }
 
     public Route(String pairName){
         this.pairName = pairName;
         deals = new ArrayList<>();
     }
 
-    public void addDeals(List<Deal> deals){
-        this.deals.addAll(deals);
+    public void addDeal(Deal deal){
+        this.deals.add(deal);
     }
 
     public void calcRouteValueInDollars() {
         resetRemainingAmounts();
         applyDeals();
 
+        refreshRouteValueInDollars();
+    }
+
+    public void refreshRouteValueInDollars() {
         routeValueInDollars = BigDecimal.ZERO;
-        for (Deal each : sortedEVDeals) {
+        for (Deal each : deals) {
             routeValueInDollars = routeValueInDollars.add(each.getValueInDollars());
         }
     }
 
     public void filterZeroAmountDeals(){
-        sortedEVDeals.removeIf(next -> next.getEffectiveAmount().compareTo(BigDecimal.ZERO) <= 0);
+        deals.removeIf(next -> next.getEffectiveAmount().compareTo(BigDecimal.ZERO) <= 0);
     }
 
     private void resetRemainingAmounts() {
@@ -60,7 +53,7 @@ public class Route {
     }
 
     private void applyDeals() {
-        for (Deal deal : sortedEVDeals) {
+        for (Deal deal : deals) {
             deal.refreshEffectiveAmount();
             deal.subtractEffectiveAmount();
         }
@@ -74,25 +67,41 @@ public class Route {
             }
         }
         sorted.sort((o1, o2) -> o2.getSpread().compareTo(o1.getSpread()));
-        sortedEVDeals =  sorted;
+        deals =  sorted;
     }
 
-    private ArrayList <Deal> findDeals(){
-        ArrayList <Deal> deals = new ArrayList <>();
-        for (Order orderFrom : getExchangeFrom().getMarket().get(getPairName()).getOrders(OrderType.BID)) {
-            for (Order orderTo : getExchangeTo().getMarket().get(getPairName()).getOrders(OrderType.ASK)) {
+    public void fillAllDeals(ArrayList<Exchange> exchanges){
+        for (Exchange exchangeFrom : exchanges) {
+            for (Exchange exchangeTo : exchanges) {
+                if (exchangeFrom.getMarket().containsKey(pairName) && exchangeTo.getMarket().containsKey(pairName)) {
+                    addDealsForExchangesPair(exchangeFrom, exchangeTo);
+                }
+            }
+        }
+    }
+
+    private void addDealsForExchangesPair(Exchange from, Exchange to){
+        for (Order orderFrom : from.getMarket().get(getPairName()).getOrders(OrderType.BID)) {
+            for (Order orderTo : to.getMarket().get(getPairName()).getOrders(OrderType.ASK)) {
                 deals.add(new Deal(this, orderFrom, orderTo));
             }
         }
-        return deals;
     }
 
     public ArrayList <Deal> getSortedEVDeals() {
-        return sortedEVDeals;
+        return deals;
     }
 
     public String getPairName() {
         return pairName;
+    }
+
+    public void setExchangeFrom(Exchange exchangeFrom) {
+        this.exchangeFrom = exchangeFrom;
+    }
+
+    public void setExchangeTo(Exchange exchangeTo) {
+        this.exchangeTo = exchangeTo;
     }
 
     public Exchange getExchangeFrom() {

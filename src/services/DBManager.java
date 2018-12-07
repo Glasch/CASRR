@@ -60,7 +60,7 @@ public class DBManager {
     private void saveOrder(Connection connection, Integer marketId, Order order, OrderType type) throws SQLException {
         BigDecimal price = order.getPrice();
         BigDecimal amount = order.getAmount();
-        String sql = "INSERT INTO \"order\" (market_id, type, price, amount, timestamp) VALUES (?, ?::order_type, ?, ?, ?) ";
+        String sql = "INSERT INTO \"order\" (market_id, type, price, amount, upd_timestamp) VALUES (?, ?::order_type, ?, ?, ?) ";
         PreparedStatement statement = connection.prepareStatement(sql);
         statement.setInt(1, marketId);
         statement.setString( 2, type.toString());

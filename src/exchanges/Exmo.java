@@ -61,11 +61,11 @@ public class Exmo extends Exchange implements Runnable {
                 if (("bids".equals(getJSONKey(type)))) {
                     if (jsonObject1.getJSONArray("bid").length() < limit)
                         limit = jsonObject1.getJSONArray("bid").length();
-                    orders.add(new Order(jsonObject1.getJSONArray("bid").getJSONArray(i).getBigDecimal(0), (jsonObject1.getJSONArray("bid").getJSONArray(i).getBigDecimal(1))));
+                    orders.add( new Order(this, jsonObject1.getJSONArray("bid").getJSONArray(i).getBigDecimal(0), (jsonObject1.getJSONArray("bid").getJSONArray(i).getBigDecimal(1))));
                 } else {
                     if (jsonObject1.getJSONArray("ask").length() < limit)
                         limit = jsonObject1.getJSONArray("ask").length();
-                    orders.add(new Order(jsonObject1.getJSONArray("ask").getJSONArray(i).getBigDecimal(0), (jsonObject1.getJSONArray("ask").getJSONArray(i).getBigDecimal(1))));
+                    orders.add(new Order(this, jsonObject1.getJSONArray("ask").getJSONArray(i).getBigDecimal(0), (jsonObject1.getJSONArray("ask").getJSONArray(i).getBigDecimal(1))));
                 }
             }
         } catch (JSONException e) {

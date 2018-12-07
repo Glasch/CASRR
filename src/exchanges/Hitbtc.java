@@ -70,9 +70,9 @@ public class Hitbtc extends Exchange implements Runnable {
 
             for (int i = 0; i < limit; i++) {
                 if (Objects.equals(this.getJSONKey(type), "bids")) {
-                    orders.add(new Order(jsonObject.getJSONArray("bid").getJSONObject(i).getBigDecimal("price"), jsonObject.getJSONArray("bid").getJSONObject(i).getBigDecimal("size")));
+                    orders.add(new Order(this, jsonObject.getJSONArray("bid").getJSONObject(i).getBigDecimal("price"), jsonObject.getJSONArray("bid").getJSONObject(i).getBigDecimal("size")));
                 } else {
-                    orders.add(new Order(jsonObject.getJSONArray("ask").getJSONObject(i).getBigDecimal("price"), jsonObject.getJSONArray("ask").getJSONObject(i).getBigDecimal("size")));
+                    orders.add(new Order(this, jsonObject.getJSONArray("ask").getJSONObject(i).getBigDecimal("price"), jsonObject.getJSONArray("ask").getJSONObject(i).getBigDecimal("size")));
                 }
             }
 
