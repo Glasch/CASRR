@@ -3,9 +3,9 @@ package services;
 import exchanges.Exchange;
 import model.Order;
 import model.OrderType;
+import model.Pair;
 import org.postgresql.util.PSQLException;
 
-import java.math.BigDecimal;
 import java.sql.*;
 import java.util.ArrayList;
 
@@ -15,8 +15,8 @@ import java.util.ArrayList;
 public class DBManager {
     Updater updater;
     private String url = "jdbc:postgresql://localhost:5432/cas";
-    private String login = "root";
-    private String password = "root";
+    private String login = "postgres";
+    private String password = "postgrespass";
 
     public DBManager(Updater updater) {
         this.updater = updater;
@@ -42,12 +42,8 @@ public class DBManager {
                         ResultSet marketResSet = getMarketResultSet(connection, exchangeID, pairID);
                         if (marketResSet.next()) {
                             Integer marketId = marketResSet.getInt("id");
-                            for (Order order : exchange.getMarket().get(pairName).getOrders(OrderType.BID)) {
-                                saveOrder(connection, marketId, order, OrderType.BID);
-                            }
-                            for (Order order : exchange.getMarket().get(pairName).getOrders(OrderType.ASK)) {
-                                saveOrder(connection, marketId, order, OrderType.ASK);
-                            }
+                            Pair pair = exchange.getMarket().get(pairName);
+                            saveMarket(connection, marketId, pair);
                         }
 
                     }
@@ -57,17 +53,40 @@ public class DBManager {
         connection.close();
     }
 
-    private void saveOrder(Connection connection, Integer marketId, Order order, OrderType type) throws SQLException {
-        BigDecimal price = order.getPrice();
-        BigDecimal amount = order.getAmount();
-        String sql = "INSERT INTO \"order\" (market_id, type, price, amount, upd_timestamp) VALUES (?, ?::order_type, ?, ?, ?) ";
+    private void saveMarket(Connection connection, Integer marketId, Pair pair ) throws SQLException {
+        String sql = "INSERT INTO \"order\" (market_id, market, timestamp) VALUES (?, ?, ?) ";
         PreparedStatement statement = connection.prepareStatement(sql);
         statement.setInt(1, marketId);
-        statement.setString( 2, type.toString());
-        statement.setBigDecimal(3, price);
-        statement.setBigDecimal(4, amount);
-        statement.setObject(5, new Date(Updater.getTimestamp().getTime()));
+        statement.setString(2, castMarket2JSON(pair));
+        statement.setObject(3, new Date(Updater.getTimestamp().getTime()));
         statement.executeUpdate();
+    }
+
+    private String castMarket2JSON(Pair pair) {
+        // {
+        // "bids' : [[price, amount]...]
+        // 'asks' : [[price, amount]...]
+        // }
+        StringBuilder stringBuilder = new StringBuilder();
+        stringBuilder.append("{ \"bids\" : [" );
+        for (Order order : pair.getOrders(OrderType.BID)) {
+            stringBuilder.append("[");
+            stringBuilder.append(order.getPrice() + "," + order.getAmount());
+            stringBuilder.append("],");
+        }
+        stringBuilder.deleteCharAt(stringBuilder.length()-1);
+        stringBuilder.append("],");
+        stringBuilder.append("\"asks\" : [" );
+        for (Order order : pair.getOrders(OrderType.ASK)) {
+            stringBuilder.append("[");
+            stringBuilder.append(order.getPrice() + "," + order.getAmount());
+            stringBuilder.append("],");
+        }
+        stringBuilder.deleteCharAt(stringBuilder.length()-1);
+        stringBuilder.append("]");
+        stringBuilder.append("}");
+        System.out.println(stringBuilder.toString());
+        return stringBuilder.toString();
     }
 
 
