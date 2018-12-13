@@ -5,6 +5,7 @@ import model.Router;
 
 import java.sql.Timestamp;
 import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
@@ -13,6 +14,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import java.text.SimpleDateFormat;
 
 /**
  * Copyright (c) Anton on 17.11.2018.
@@ -20,7 +22,7 @@ import java.util.concurrent.Future;
 
 public class Updater {
  private static Updater instance;
- private static Date timestamp;
+ private static Timestamp timestamp;
  private ArrayList<Exchange> exchanges = new ArrayList <>();
  private ExecutorService executorService = Executors.newCachedThreadPool();
  private List<Future> futures = new ArrayList<>();
@@ -28,15 +30,15 @@ public class Updater {
 
   private Updater() {
         exchanges.add(new Binance());
-        exchanges.add(new Bitfinex());
-        exchanges.add(new Bittrex());
-        exchanges.add(new Exmo());
-        exchanges.add(new LiveCoin());
-        exchanges.add(new Poloniex());
-        exchanges.add(new Yobit());
-        exchanges.add(new Kucoin());
-        exchanges.add(new Hitbtc());
-        exchanges.add(new Huobi());
+//        exchanges.add(new Bitfinex());
+//        exchanges.add(new Bittrex());
+//        exchanges.add(new Exmo());
+//        exchanges.add(new LiveCoin());
+//        exchanges.add(new Poloniex());
+//        exchanges.add(new Yobit());
+//        exchanges.add(new Kucoin());
+//        exchanges.add(new Hitbtc());
+//        exchanges.add(new Huobi());
     }
 
     public static Updater getInstance() {
@@ -67,7 +69,7 @@ public class Updater {
             }
         }
 
-        timestamp = new Date();
+        timestamp = Timestamp.valueOf(LocalDateTime.now());
         futures.clear();
     }
 
@@ -85,5 +87,5 @@ public class Updater {
         return exchanges;
     }
 
-    public static Date getTimestamp() { return timestamp; }
+    public static Timestamp getTimestamp() { return timestamp; }
 }

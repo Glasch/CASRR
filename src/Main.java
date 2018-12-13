@@ -11,7 +11,7 @@ public class Main {
     public static void main(String[] args) throws Exception {
         Updater updater = Updater.getInstance();
         DBManager dbManager = new DBManager(updater);
-        dbManager.saveStaticData();
+      //  dbManager.saveStaticData();
         while (true) {
             updater.update();
             dbManager.saveOrders();
@@ -22,6 +22,5 @@ public class Main {
         }
     }
 
-    // TODO: 06.12.2018 Писать нормальную дату в базу, сохраняться массивы в базу, попробывать закончить Trader
 }
 
