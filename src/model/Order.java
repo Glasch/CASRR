@@ -13,7 +13,6 @@ public class Order {
     private Exchange exchange;
     private BigDecimal price;
     private BigDecimal amount;
-
     private BigDecimal remainingAmount;
 
     public Order(Exchange exchange, BigDecimal price, BigDecimal amount) {

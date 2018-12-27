@@ -17,11 +17,23 @@ public class Route {
     private Exchange exchangeTo;
     private ArrayList <Deal> deals;
     private BigDecimal routeValueInDollars;
+    private BigDecimal effectiveAmountInDollars;
 
     public Route(String pairName){
         this.pairName = pairName;
         deals = new ArrayList<>();
     }
+
+    public void calcEffectiveAmount(){
+        UsdConverter converter = UsdConverter.getInstance();
+        effectiveAmountInDollars = BigDecimal.ZERO;
+        for (Deal deal : deals) {
+            effectiveAmountInDollars = effectiveAmountInDollars.add(deal.getEffectiveAmount());
+
+        }
+     converter.loadData();
+     effectiveAmountInDollars = converter.convert(pairName,effectiveAmountInDollars);
+     }
 
     public void addDeal(Deal deal){
         this.deals.add(deal);
@@ -30,7 +42,6 @@ public class Route {
     public void calcRouteValueInDollars() {
         resetRemainingAmounts();
         applyDeals();
-
         refreshRouteValueInDollars();
     }
 
@@ -59,10 +70,10 @@ public class Route {
         }
     }
 
-    public void filterDeals() {
+    public void filterDeals(BigDecimal border) {
         ArrayList <Deal> sorted = new ArrayList <>();
         for (Deal deal : deals) {
-            if (deal.getSpread().compareTo(BigDecimal.ZERO) > 0) {
+            if (deal.getSpread().compareTo(border) > 0) {
                 sorted.add(deal);
             }
         }
@@ -80,7 +91,7 @@ public class Route {
         }
     }
 
-    private void addDealsForExchangesPair(Exchange from, Exchange to){
+    public void addDealsForExchangesPair(Exchange from, Exchange to){
         for (Order orderFrom : from.getMarket().get(getPairName()).getOrders(OrderType.BID)) {
             for (Order orderTo : to.getMarket().get(getPairName()).getOrders(OrderType.ASK)) {
                 deals.add(new Deal(this, orderFrom, orderTo));

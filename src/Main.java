@@ -14,7 +14,7 @@ public class Main {
       //  dbManager.saveStaticData();
         while (true) {
             updater.update();
-            dbManager.saveOrders();
+//            dbManager.saveOrders();
             Router router = new Router(updater);
             Trader trader = new Trader(router);
             trader.calcValueInDollars();
