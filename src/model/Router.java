@@ -49,23 +49,23 @@ public class Router {
         }
 
 
-        for (Route resultingRoute : resultingRoutes) {
-            if (resultingRoute.getPairName().contains("USD") && !resultingRoute.getPairName().contains("USDT")) {
-                for (String pairName : resultingRoute.getExchangeFrom().getMarket().keySet()) {
-                    if (pairName.contains("USD") && !pairName.contains("USDT")) {
-                        Route route = new Route(pairName);
-                        route.setExchangeFrom(resultingRoute.getExchangeTo());
-                        route.setExchangeTo(resultingRoute.getExchangeFrom());
-                        route.addDealsForExchangesPair(route.getExchangeFrom(),route.getExchangeTo());
-                        route.calcRouteValueInDollars();
-                        resultingRoute.calcEffectiveAmount();
-                        resultingRoute.calcRouteValueInDollars();
-                        System.out.println();
-                    }
-                }
-            }
-        }
-        resultingRoutes.forEach(Route::refreshRouteValueInDollars);
+//        for (Route resultingRoute : resultingRoutes) {
+//            if (resultingRoute.getPairName().contains("USD") && !resultingRoute.getPairName().contains("USDT")) {
+//                for (String pairName : resultingRoute.getExchangeFrom().getMarket().keySet()) {
+//                    if (pairName.contains("USD") && !pairName.contains("USDT")) {
+//                        Route route = new Route(pairName);
+//                        route.setExchangeFrom(resultingRoute.getExchangeTo());
+//                        route.setExchangeTo(resultingRoute.getExchangeFrom());
+//                        route.addDealsForExchangesPair(route.getExchangeFrom(),route.getExchangeTo());
+//                        route.calcRouteValueInDollars();
+//                        resultingRoute.calcEffectiveAmount();
+//                        resultingRoute.calcRouteValueInDollars();
+//                        System.out.println();
+//                    }
+//                }
+//            }
+//        }
+       resultingRoutes.forEach(Route::refreshRouteValueInDollars);
         sort(masterRoutes);
         sort(resultingRoutes);
     }
