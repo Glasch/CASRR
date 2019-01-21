@@ -1,5 +1,6 @@
 package exchanges;
 
+import model.ExchangeAccount;
 import model.Order;
 import model.OrderType;
 import model.Pair;
@@ -14,7 +15,7 @@ import java.util.HashMap;
  * Copyright (c) Anton on 23.10.2018.
  */
 public abstract class Exchange implements Runnable {
-
+    ExchangeAccount exchangeAccount;
     private boolean isMarketValid = true;
 
 
@@ -96,5 +97,13 @@ public abstract class Exchange implements Runnable {
 
     public boolean isMarketValid() {
         return isMarketValid;
+    }
+
+    public ExchangeAccount getExchangeAccount() {
+        return exchangeAccount;
+    }
+
+    public void setExchangeAccount(ExchangeAccount exchangeAccount) {
+        this.exchangeAccount = exchangeAccount;
     }
 }

@@ -1,8 +1,6 @@
 package exchanges;
 
-import model.Order;
-import model.OrderType;
-import model.Pair;
+import model.*;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -14,6 +12,7 @@ import java.util.HashMap;
  * Copyright (c) Anton on 17.10.2018.
  */
 public class Binance extends Exchange implements Runnable {
+
     private ArrayList <String> pairs = new ArrayList <String>() {{
         add("XRP/BTC");
         add("ETH/BTC");
@@ -42,6 +41,7 @@ public class Binance extends Exchange implements Runnable {
 
 
     }};
+
     private HashMap <String, Pair> market = new HashMap <>();
 
     @Override
@@ -72,7 +72,6 @@ public class Binance extends Exchange implements Runnable {
         res = split[0] + split[1];
         return res;
     }
-
 
     @Override
     public HashMap <String, Pair> getMarket() {
