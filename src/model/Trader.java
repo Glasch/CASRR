@@ -50,17 +50,22 @@ public class Trader {
        for (Deal deal : route.getSortedEVDeals()) {
            effectiveAmount = effectiveAmount.add(deal.getEffectiveAmount());
        }
-       System.out.println(route + " " + effectiveAmount );
+//       acceptTax(effectiveAmount,route);
        for (Deal deal : route.getSortedEVDeals()) {
            trade(deal, route);
        }
-       System.out.println(route);
-       System.out.println(route.getExchangeFrom().getExchangeAccount().balances.get(getDealCurrency(route)));
-       System.out.println(route.getExchangeFrom().getExchangeAccount().balances.get(getMarketCurrency(route)));
-       System.out.println(route.getExchangeTo().getExchangeAccount().balances.get(getDealCurrency(route)));
-       System.out.println(route.getExchangeTo().getExchangeAccount().balances.get(getMarketCurrency(route)));
-       System.out.println(effectiveAmount);
-       System.out.println();
+    }
+
+    private void acceptTax(BigDecimal effectiveAmount, Route route) {
+        String dealCurrency = getDealCurrency(route);
+
+        BigDecimal fromDealBalance = route.getExchangeFrom().getExchangeAccount().balances.get(dealCurrency);
+        BigDecimal resFromDealBalance = fromDealBalance.subtract(effectiveAmount.multiply(BigDecimal.valueOf(0.001)));
+        route.getExchangeFrom().getExchangeAccount().balances.replace(dealCurrency, resFromDealBalance);
+
+        BigDecimal toDealBalance = route.getExchangeTo().getExchangeAccount().balances.get(dealCurrency);
+        BigDecimal resToDealBalance = toDealBalance.subtract(effectiveAmount.multiply(BigDecimal.valueOf(0.001)));
+        route.getExchangeTo().getExchangeAccount().balances.replace(dealCurrency, resToDealBalance);
     }
 
     private void trade(Deal deal, Route route) {
@@ -74,15 +79,17 @@ public class Trader {
 
         BigDecimal exchangeFromDealAccount = route.getExchangeFrom().getExchangeAccount().balances.get(getDealCurrency(route));
         BigDecimal exchangeFromMarketAccount = route.getExchangeFrom().getExchangeAccount().balances.get(getMarketCurrency(route));
+        BigDecimal exchangeToDealAccount = route.getExchangeTo().getExchangeAccount().balances.get(getDealCurrency(route));
+        BigDecimal exchangeToMarketAccount = route.getExchangeTo().getExchangeAccount().balances.get(getMarketCurrency(route));
+
+        deal.setEffectiveAmount(checkBalances(deal,
+                exchangeFromDealAccount, exchangeToMarketAccount));
 
         exchangeFromDealAccount = exchangeFromDealAccount.subtract(deal.getEffectiveAmount());
         route.getExchangeFrom().getExchangeAccount().balances.replace(getDealCurrency(route),exchangeFromDealAccount);
 
         exchangeFromMarketAccount = exchangeFromMarketAccount.add(deal.getEffectiveAmount().multiply(deal.getBid().getPrice()));
         route.getExchangeFrom().getExchangeAccount().balances.replace(getMarketCurrency(route), exchangeFromMarketAccount);
-
-        BigDecimal exchangeToDealAccount = route.getExchangeTo().getExchangeAccount().balances.get(getDealCurrency(route));
-        BigDecimal exchangeToMarketAccount = route.getExchangeTo().getExchangeAccount().balances.get(getMarketCurrency(route));
 
         exchangeToDealAccount = exchangeToDealAccount.add(deal.getEffectiveAmount());
         route.getExchangeTo().getExchangeAccount().balances.replace(getDealCurrency(route),exchangeToDealAccount);
@@ -92,6 +99,20 @@ public class Trader {
 
 
 
+    }
+
+    private BigDecimal checkBalances(Deal deal, BigDecimal exchangeFromDealAccount, BigDecimal exchangeToMarketAccount) {
+       if (deal.getEffectiveAmount().compareTo(exchangeFromDealAccount) > -1 ){
+           System.out.println("Low Balance!");
+           deal.setEffectiveAmount(exchangeFromDealAccount);
+       }
+
+       if (exchangeToMarketAccount.compareTo(deal.getEffectiveAmount().multiply(deal.getAsk().getPrice())) < 1){
+           System.out.println("Low Balance!");
+           BigDecimal res = exchangeToMarketAccount.divide(deal.getAsk().getPrice(), 10, BigDecimal.ROUND_FLOOR);
+           deal.setEffectiveAmount(res);
+       }
+       return deal.getEffectiveAmount();
     }
 
 

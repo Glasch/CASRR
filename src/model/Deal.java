@@ -47,7 +47,7 @@ public class Deal {
     private BigDecimal calcSpread() {
         BigDecimal value = ((bid.getPrice().subtract(ask.getPrice())).divide(bid.getPrice(),
                 4,
-                BigDecimal.ROUND_HALF_UP).multiply(BigDecimal.valueOf(100)));
+                BigDecimal.ROUND_FLOOR).multiply(BigDecimal.valueOf(100)));
         return value;
     }
 

@@ -14,14 +14,14 @@ import java.util.HashMap;
 
 public class LiveCoin extends Exchange implements Runnable {
     private ArrayList<String> pairs = new ArrayList <String>() {{
-        add("BTC/USD");
-        add("ETH/USD");
-        // add("BCH/USD");
-        add("LTC/USD");
+//        add("BTC/USD");
+//        add("ETH/USD");
+//        // add("BCH/USD");
+//        add("LTC/USD");
         add("ETH/BTC");
         add("LTC/BTC");
-        //  add("BCH/BTC");
-        add("DASH/BTC");
+//        //  add("BCH/BTC");
+//        add("DASH/BTC");
 
     }};
     private HashMap<String, Pair> market = new HashMap <>();

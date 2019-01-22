@@ -17,28 +17,28 @@ import java.util.Objects;
  */
 public class Exmo extends Exchange implements Runnable {
     private ArrayList<String> pairs = new ArrayList<String>() {{
-        add("BTC/USD");
-        add("ETH/USD");
+//        add("BTC/USD");
+//        add("ETH/USD");
         //  add("BCH/USD");
-        add("NEO/USD");
-        add("ADA/USD");
-        add("TRX/USD");
-        add("XLM/USD");
-        add("EOS/USD");
+//        add("NEO/USD");
+//        add("ADA/USD");
+//        add("TRX/USD");
+//        add("XLM/USD");
+//        add("EOS/USD");
         add("XRP/BTC");
         add("ETH/BTC");
         //add("BCH/BTC");
         add("LTC/BTC");
-        add("NEO/BTC");
-        add("ADA/BTC");
-        add("TRX/BTC");
-        add("XLM/BTC");
-        add("EOS/BTC");
-        add("DASH/BTC");
-        add("ETC/BTC");
+//        add("NEO/BTC");
+//        add("ADA/BTC");
+//        add("TRX/BTC");
+//        add("XLM/BTC");
+//        add("EOS/BTC");
+//        add("DASH/BTC");
+//        add("ETC/BTC");
         add("ZEC/BTC");
-        add("XMR/BTC");
-        add("ADA/ETH");
+//        add("XMR/BTC");
+//        add("ADA/ETH");
         //  add("BCH/ETH");
 
 

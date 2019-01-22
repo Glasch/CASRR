@@ -25,7 +25,7 @@ public class Router {
 
         masterRoutes = findRoutes(exchanges, allPairs);
         for (Route route : masterRoutes) {
-            route.filterDeals(BigDecimal.ZERO);
+            route.filterDeals(BigDecimal.valueOf(0.02));
             route.calcRouteValueInDollars();
             route.filterZeroAmountDeals();
         }
