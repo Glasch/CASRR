@@ -30,7 +30,7 @@ public class ExchangeAccount {
                 balances.put(currency, getCurrencyBalance(BigDecimal.valueOf(200)));
             }
             else{
-                balances.put(currency,getCurrencyBalance(BigDecimal.valueOf(40000)));
+                balances.put(currency,getCurrencyBalance(BigDecimal.valueOf(400000)));
             }
 
         }

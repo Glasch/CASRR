@@ -37,11 +37,13 @@ public class Main {
             for (Exchange exchange : updater.getExchanges()) {
                 System.out.println("BEFORE");
 
-                btcTot = btcTot.add(exchange.getExchangeAccount().getBalances().get("BTC"));
-                ethTot = ethTot.add(exchange.getExchangeAccount().getBalances().get("ETH"));
-                ltcTot = ltcTot.add(exchange.getExchangeAccount().getBalances().get("LTC"));
-                xrpTot = xrpTot.add(exchange.getExchangeAccount().getBalances().get("XRP"));
-                zecTot = zecTot.add(exchange.getExchangeAccount().getBalances().get("ZEC"));
+
+                    btcTot = btcTot.add(exchange.getExchangeAccount().getBalances().get("BTC"));
+                    ethTot = ethTot.add(exchange.getExchangeAccount().getBalances().get("ETH"));
+                    ltcTot = ltcTot.add(exchange.getExchangeAccount().getBalances().get("LTC"));
+                    xrpTot = xrpTot.add(exchange.getExchangeAccount().getBalances().get("XRP"));
+                    zecTot = zecTot.add(exchange.getExchangeAccount().getBalances().get("ZEC"));
+
 
             }
 

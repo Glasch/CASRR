@@ -15,6 +15,8 @@ public class Deal {
     private BigDecimal effectiveAmount;
     private BigDecimal spread;
     private BigDecimal valueInDollars;
+    private BigDecimal taxFrom;
+    private  BigDecimal taxTo;
 
     public Deal(Route route, Order bid, Order ask) {
         this.route = route;
@@ -45,7 +47,7 @@ public class Deal {
     }
 
     private BigDecimal calcSpread() {
-        BigDecimal value = ((bid.getPrice().subtract(ask.getPrice())).divide(bid.getPrice(),
+        BigDecimal value = ((bid.getPrice().subtract(ask.getPrice())).divide(ask.getPrice(),
                 4,
                 BigDecimal.ROUND_FLOOR).multiply(BigDecimal.valueOf(100)));
         return value;
@@ -85,5 +87,19 @@ public class Deal {
         this.effectiveAmount = effectiveAmount;
     }
 
+    public BigDecimal getTaxFrom() {
+        return taxFrom;
+    }
 
+    public void setTaxFrom(BigDecimal taxFrom) {
+        this.taxFrom = taxFrom;
+    }
+
+    public BigDecimal getTaxTo() {
+        return taxTo;
+    }
+
+    public void setTaxTo(BigDecimal taxTo) {
+        this.taxTo = taxTo;
+    }
 }

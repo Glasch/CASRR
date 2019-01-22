@@ -19,9 +19,9 @@ import java.util.Objects;
 public class Yobit extends Exchange implements Runnable {
     private ArrayList<String> pairs = new ArrayList<String>() {{
         add("ETH/BTC");
-        add("DASH/BTC");
+//        add("DASH/BTC");
         add("ZEC/BTC");
-        add("LSK/BTC");
+//        add("LSK/BTC");
         add("LTC/BTC");
         add("WAVES/BTC");
         add("DOGE/BTC");
@@ -32,7 +32,7 @@ public class Yobit extends Exchange implements Runnable {
 
     @Override
     protected String buildAPIRequest(String pair) {
-        return "https://yobit.net/api/3/depth/" + casting(pair) + "?limit=10";
+        return "https://yobit.io/api/3/depth/" + casting(pair) + "?limit=10";
     }
 
     protected ArrayList<Order> findOrders(OrderType type, JSONObject jsonObject, int limit) {
