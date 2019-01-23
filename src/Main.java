@@ -1,9 +1,6 @@
 import exchanges.Exchange;
-import model.ExchangeAccount;
-import model.Route;
-import model.Router;
+import model.*;
 import services.DBManager;
-import model.Trader;
 import services.Updater;
 import services.UsdConverter;
 
@@ -61,6 +58,9 @@ public class Main {
             for (Route route : router.getResultingRoutes()) {
                 trader.makeDeal(route);
                 System.out.println("Accepted: " + route );
+                for (Deal deal : route.getSortedEVDeals()) {
+                    System.out.println(deal + " " + deal.getSpread()+ " " + deal.getTaxFrom() + " " + deal.getTaxTo());
+                }
             }
 
              btcTot = BigDecimal.ZERO;

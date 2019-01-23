@@ -53,8 +53,8 @@ public class Trader {
     }
 
     private  void calcTax(Deal deal){
-        BigDecimal fromTax = deal.getEffectiveAmount().multiply(deal.getBid().getPrice()).multiply(BigDecimal.valueOf(0.1));
-        BigDecimal toTax = deal.getEffectiveAmount().multiply(BigDecimal.valueOf(0.1)) ;
+        BigDecimal fromTax = deal.getEffectiveAmount().multiply(deal.getBid().getPrice()).multiply(BigDecimal.valueOf(0.001));
+        BigDecimal toTax = deal.getEffectiveAmount().multiply(BigDecimal.valueOf(0.001)) ;
 
         deal.setTaxFrom(fromTax);
         deal.setTaxTo(toTax);
