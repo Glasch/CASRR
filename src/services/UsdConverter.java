@@ -17,6 +17,7 @@ public class UsdConverter {
     private HashMap<String, BigDecimal> currencyPrices = new HashMap<String, BigDecimal>() {{
         put("USD", BigDecimal.valueOf(1));
         put("USDT", BigDecimal.valueOf(1));
+        put("BTC", BigDecimal.valueOf(3555));
     }};
 
     public static UsdConverter getInstance() {

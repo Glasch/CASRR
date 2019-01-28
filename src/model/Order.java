@@ -60,4 +60,8 @@ public class Order {
         Long percentUsed = Math.round(div.doubleValue()*100);
         return "O-"+id + " P: " + price + " A: " + amount + " U: " + percentUsed + "%";
     }
+
+    public void setExchange(Exchange exchange) {
+        this.exchange = exchange;
+    }
 }

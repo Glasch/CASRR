@@ -16,6 +16,8 @@ public class Trader {
         this.router = router;
     }
 
+    public Trader(){}
+
     public void calcValueInDollars() {
         System.out.println("-------------MASTER ROUTES------------------");
         for (Route route : router.getMasterRoutes()) {
@@ -74,9 +76,9 @@ public class Trader {
         fromMarketBalance = fromMarketBalance.subtract(totFromTax);
         route.getExchangeFrom().getExchangeAccount().balances.replace(getMarketCurrency(route), fromMarketBalance);
 
-        BigDecimal toDealBalance = route.getExchangeTo().getExchangeAccount().balances.get(getDealCurrency(route));
+        BigDecimal toDealBalance = route.getExchangeTo().getExchangeAccount().balances.get(getMarketCurrency(route));
         toDealBalance = toDealBalance.subtract(totToTax);
-        route.getExchangeTo().getExchangeAccount().balances.replace(getDealCurrency(route), toDealBalance);
+        route.getExchangeTo().getExchangeAccount().balances.replace(getMarketCurrency(route), toDealBalance);
 
     }
 
