@@ -19,8 +19,11 @@ import java.util.ArrayList;
 public class TraderUTest extends TestCase {
 
     public void testTrader() {
-        Order bid = new Order(null,BigDecimal.valueOf(0.02),BigDecimal.valueOf(100));
-        Order ask = new Order(null,BigDecimal.valueOf(0.01996),BigDecimal.valueOf(100));
+        Order bid = new Order(null,BigDecimal.valueOf(0.03071972),BigDecimal.valueOf(100));
+        Order ask = new Order(null,BigDecimal.valueOf(0.03065828),BigDecimal.valueOf(100));
+
+        Order bid1 = new Order(null,BigDecimal.valueOf(0.03071972),BigDecimal.valueOf(100));
+        Order ask1 = new Order(null,BigDecimal.valueOf(0.03065828),BigDecimal.valueOf(100));
 
         Route route = new Route("ETH/BTC");
         Updater updater = Updater.getInstance();
@@ -28,16 +31,20 @@ public class TraderUTest extends TestCase {
             exchange.setExchangeAccount(new ExchangeAccount(exchange));
             if (exchange instanceof Binance){
                 bid.setExchange(exchange);
+                bid1.setExchange(exchange);
                 route.setExchangeFrom(exchange);
             }
             if (exchange instanceof Bittrex){
                 ask.setExchange(exchange);
+                ask1.setExchange(exchange);
                 route.setExchangeTo(exchange);
             }
         }
 
         Deal deal = new Deal(route,bid,ask);
+        Deal deal1 = new Deal(route,bid1,ask1);
         route.addDeal(deal);
+        route.addDeal(deal1);
         Trader trader = new Trader();
 
         BigDecimal btcTot = BigDecimal.ZERO;
@@ -48,11 +55,11 @@ public class TraderUTest extends TestCase {
             ethTot = ethTot.add(exchange.getExchangeAccount().getBalances().get("ETH"));
         }
 
-        BigDecimal totInSBofore = BigDecimal.ZERO;
+        BigDecimal totInSBefore = BigDecimal.ZERO;
 
-        totInSBofore = totInSBofore
-                .add(btcTot.multiply(BigDecimal.valueOf(3555)))
-                .add(ethTot.multiply(BigDecimal.valueOf(30)));
+        totInSBefore = totInSBefore
+                .add(btcTot.multiply(BigDecimal.valueOf(3418)))
+                .add(ethTot.multiply(BigDecimal.valueOf(105)));
 
         btcTot = BigDecimal.ZERO;
         ethTot = BigDecimal.ZERO;
@@ -82,14 +89,15 @@ public class TraderUTest extends TestCase {
 
         BigDecimal totInS = BigDecimal.ZERO;
         totInS = totInS
-                .add(btcTot.multiply(BigDecimal.valueOf(3555)))
-                .add(ethTot.multiply(BigDecimal.valueOf(30)));
+                .add(btcTot.multiply(BigDecimal.valueOf(3418)))
+                .add(ethTot.multiply(BigDecimal.valueOf(105)));
 
-        System.out.println("BTC TOT:" + btcTot + " " + btcTot.multiply(BigDecimal.valueOf(3555)) + " S");
-        System.out.println("ETH TOT:" + ethTot + " " + ethTot.multiply(BigDecimal.valueOf(30)) + " S");
-        System.out.println( "Before: " + totInSBofore + " After: " + totInS);
+        System.out.println("BTC TOT:" + btcTot + " " + btcTot.multiply(BigDecimal.valueOf(3418)) + " S");
+        System.out.println("ETH TOT:" + ethTot + " " + ethTot.multiply(BigDecimal.valueOf(105)) + " S");
+        System.out.println( "Before: " + totInSBefore + " After: " + totInS);
 
-        Assert.assertTrue(totInSBofore.compareTo(totInS) == 0);
+        Assert.assertTrue(  ( totInS.subtract(totInSBefore).compareTo(BigDecimal.valueOf(0)) == 1 &&
+                                totInS.subtract(totInSBefore).compareTo(BigDecimal.valueOf(0.001)) == -1 ) ? true : false );
 
     }
 }

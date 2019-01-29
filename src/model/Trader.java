@@ -44,13 +44,25 @@ public class Trader {
     }
     public void makeDeal(Route route) {
         System.out.println();
+
+        BigDecimal totFromTax = BigDecimal.ZERO;
+        BigDecimal totToTax = BigDecimal.ZERO;
+
         for (Deal deal : route.getSortedEVDeals()) {
+            deal.setEffectiveAmount(checkBalances(deal, route));
             calcTax(deal);
-        }
-        acceptTax(route);
-        for (Deal deal : route.getSortedEVDeals()) {
+
+            totFromTax = totFromTax.add(deal.getTaxFrom());
+            totToTax = totToTax.add(deal.getTaxTo());
+
             trade(deal, route);
         }
+
+        route.setTaxFrom(totFromTax);
+        route.setTaxTo(totToTax);
+
+        acceptTax(route);
+
     }
 
     private  void calcTax(Deal deal){
@@ -63,20 +75,12 @@ public class Trader {
 
 
     private void acceptTax(Route route) {
-        BigDecimal totFromTax = BigDecimal.ZERO;
-        BigDecimal totToTax = BigDecimal.ZERO;
-
-        for (Deal deal : route.getSortedEVDeals()) {
-            totFromTax = totFromTax.add(deal.getTaxFrom());
-            totToTax = totToTax.add(deal.getTaxTo());
-        }
-
         BigDecimal fromMarketBalance = route.getExchangeFrom().getExchangeAccount().balances.get(getMarketCurrency(route));
-        fromMarketBalance = fromMarketBalance.subtract(totFromTax);
+        fromMarketBalance = fromMarketBalance.subtract(route.getTaxFrom());
         route.getExchangeFrom().getExchangeAccount().balances.replace(getMarketCurrency(route), fromMarketBalance);
 
         BigDecimal toDealBalance = route.getExchangeTo().getExchangeAccount().balances.get(getDealCurrency(route));
-        toDealBalance = toDealBalance.subtract(totToTax);
+        toDealBalance = toDealBalance.subtract(route.getTaxTo());
         route.getExchangeTo().getExchangeAccount().balances.replace(getDealCurrency(route), toDealBalance);
 
     }
@@ -87,7 +91,7 @@ public class Trader {
         BigDecimal exchangeToDealAccount = route.getExchangeTo().getExchangeAccount().balances.get(getDealCurrency(route));
         BigDecimal exchangeToMarketAccount = route.getExchangeTo().getExchangeAccount().balances.get(getMarketCurrency(route));
 
-        deal.setEffectiveAmount(checkBalances(deal, route));
+
 
         System.out.println(deal.getSpread());
         exchangeFromDealAccount = exchangeFromDealAccount.subtract(deal.getEffectiveAmount());
@@ -106,6 +110,8 @@ public class Trader {
     }
 
     private BigDecimal checkBalances(Deal deal, Route route) {
+        BigDecimal test = deal.getEffectiveAmount();
+
 
         BigDecimal fromDealBalance = route.getExchangeFrom().getExchangeAccount().balances.get(getDealCurrency(route));
         if (deal.getEffectiveAmount().compareTo(fromDealBalance) > 0) {

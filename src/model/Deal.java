@@ -22,7 +22,7 @@ public class Deal {
         this.route = route;
         this.bid = bid;
         this.ask = ask;
-        refreshEffectiveAmount();
+        refreshEffectiveAmount(); //this.spread = calcSpread();
     }
 
     void refreshEffectiveAmount() {

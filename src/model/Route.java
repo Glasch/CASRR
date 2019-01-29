@@ -16,6 +16,8 @@ public class Route {
     private ArrayList<Deal> deals;
     private BigDecimal routeValueInDollars;
     private BigDecimal routeAmountInDollars;
+    private BigDecimal taxFrom;
+    private BigDecimal taxTo;
 
     public Route(String pairName) {
         this.pairName = pairName;
@@ -156,5 +158,21 @@ public class Route {
 
     public BigDecimal getRouteAmountInDollars() {
         return routeAmountInDollars;
+    }
+
+    public BigDecimal getTaxFrom() {
+        return taxFrom;
+    }
+
+    public void setTaxFrom(BigDecimal taxFrom) {
+        this.taxFrom = taxFrom;
+    }
+
+    public BigDecimal getTaxTo() {
+        return taxTo;
+    }
+
+    public void setTaxTo(BigDecimal taxTo) {
+        this.taxTo = taxTo;
     }
 }

@@ -15,10 +15,10 @@ public class ExchangeAccount {
         Set <String> currencies = getCurrencies(exchange);
         for (String currency : currencies) {
             if (Objects.equals(currency, "BTC")) {
-                balances.put(currency, getCurrencyBalance(BigDecimal.valueOf(10)));
+                balances.put(currency, getCurrencyBalance(BigDecimal.valueOf(0.0022)));
             }else
             if (Objects.equals(currency, "ETH")){
-                balances.put(currency,getCurrencyBalance(BigDecimal.valueOf(1000)));
+                balances.put(currency,getCurrencyBalance(BigDecimal.valueOf(0.0757)));
             }else
             if (Objects.equals(currency, "LTC")){
                 balances.put(currency,getCurrencyBalance(BigDecimal.valueOf(2000)));
