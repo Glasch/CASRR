@@ -19,8 +19,9 @@ import java.util.ArrayList;
 public class TraderUTest extends TestCase {
 
     public void testTrader() {
-        Order bid = new Order(null,BigDecimal.ONE,BigDecimal.ONE);
-        Order ask = new Order(null,BigDecimal.valueOf(0.998),BigDecimal.ONE);
+        Order bid = new Order(null,BigDecimal.valueOf(0.02),BigDecimal.valueOf(100));
+        Order ask = new Order(null,BigDecimal.valueOf(0.01996),BigDecimal.valueOf(100));
+
         Route route = new Route("ETH/BTC");
         Updater updater = Updater.getInstance();
         for (Exchange exchange : updater.getExchanges()) {
@@ -60,8 +61,8 @@ public class TraderUTest extends TestCase {
         System.out.println(route);
         System.out.println(route.getSortedEVDeals());
         for (Deal currentDeal : route.getSortedEVDeals()) {
-            System.out.println("Tax From: " + currentDeal.getTaxFrom().multiply(BigDecimal.valueOf(3555)));
-            System.out.println("Tax To: " + currentDeal.getTaxTo().multiply(BigDecimal.valueOf(3555)));
+            System.out.println("Tax From: " + currentDeal.getTaxFrom());
+            System.out.println("Tax To: " + currentDeal.getTaxTo());
         }
 
 

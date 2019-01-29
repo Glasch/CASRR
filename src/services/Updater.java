@@ -32,9 +32,9 @@ public class Updater {
         exchanges.add(new Binance());
 //        exchanges.add(new Bitfinex());
         exchanges.add(new Bittrex());
-        exchanges.add(new Exmo());
+//        exchanges.add(new Exmo());
 //        exchanges.add(new LiveCoin());
-        exchanges.add(new Poloniex());
+//        exchanges.add(new Poloniex());
 //        exchanges.add(new Yobit());
 //        exchanges.add(new Kucoin());
 //        exchanges.add(new Hitbtc());
