@@ -3,40 +3,36 @@ package exchanges;
 import model.Order;
 import model.OrderType;
 import model.Pair;
-import org.json.JSONArray;
 import org.json.JSONObject;
 
-import java.io.IOException;
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Objects;
+import java.util.*;
 
 /**
  * Copyright (c) Anton on 17.10.2018.
  */
 public class Yobit extends Exchange implements Runnable {
+    private BigDecimal takerTax = BigDecimal.valueOf(0.002);
+    private HashMap<String, Pair> market = new HashMap<>();
     private ArrayList<String> pairs = new ArrayList<String>() {{
         add("ETH/BTC");
-//        add("DASH/BTC");
+        add("DASH/BTC");
         add("ZEC/BTC");
-//        add("LSK/BTC");
+        add("LSK/BTC");
         add("LTC/BTC");
         add("WAVES/BTC");
         add("DOGE/BTC");
         add("XRP/BTC");
         add("BTC/USD");
     }};
-    private HashMap<String, Pair> market = new HashMap<>();
 
     @Override
     protected String buildAPIRequest(String pair) {
         return "https://yobit.io/api/3/depth/" + casting(pair) + "?limit=10";
     }
 
-    protected ArrayList<Order> findOrders(OrderType type, JSONObject jsonObject, int limit) {
-        ArrayList<Order> orders = new ArrayList<>();
+    protected List <Order> findOrders(OrderType type, JSONObject jsonObject, int limit) {
+        List<Order> orders = new ArrayList<>();
         try {
             Iterator<String> keys = jsonObject.keys();
             String pairKey=keys.next();
@@ -71,13 +67,16 @@ public class Yobit extends Exchange implements Runnable {
     }
 
     @Override
-    public HashMap<String, Pair> getMarket() {
+    public Map <String, Pair> getMarket() {
         return market;
     }
 
     @Override
-    public ArrayList<String> getPairs() {
+    public List <String> getPairs() {
         return pairs;
     }
 
+    public BigDecimal getTakerTax() {
+        return takerTax;
+    }
 }

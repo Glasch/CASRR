@@ -1,21 +1,23 @@
 package exchanges;
 
-import exchanges.Exchange;
 import model.Order;
 import model.OrderType;
 import model.Pair;
 import org.json.JSONObject;
 
-import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class Bitfinex extends Exchange implements Runnable {
-    private ArrayList <String> pairs = new ArrayList <String>() {{
+    private BigDecimal takerTax = BigDecimal.valueOf(0.001);
+    private Map <String, Pair> market = new HashMap <>();
+    private List <String> pairs = new ArrayList <String>() {{
         add("BTC/USD");
         add("ETH/USD");
-        // add("BCH/USD");
+        add("BCH/USD");
         add("XRP/USD");
         add("EOS/USD");
         add("LTC/USD");
@@ -25,7 +27,7 @@ public class Bitfinex extends Exchange implements Runnable {
         add("ZEC/USD");
         add("XRP/BTC");
         add("ETH/BTC");
-        //  add("BCH/BTC");
+        add("BCH/BTC");
         add("XMR/BTC");
         add("LTC/BTC");
         add("DSH/BTC");
@@ -36,22 +38,20 @@ public class Bitfinex extends Exchange implements Runnable {
         add("TRX/BTC");
         add("XLM/BTC");
         add("BAT/BTC");
-        //  add("BCH/ETH");
+        add("BCH/ETH");
         add("EOS/ETH");
         add("NEO/ETH");
         add("TRX/ETH");
         add("XLM/ETH");
     }};
-    private HashMap <String, Pair> market = new HashMap <>();
-
 
     @Override
     protected String buildAPIRequest(String pair) {
-        return "https://api.bitfinex.com/v1/book/" + casting(pair);
+        return "https://api.bitfinex.me/v1/book/" + casting(pair);
     }
 
-    protected ArrayList <Order> findOrders(OrderType type, JSONObject jsonObject, int limit) {
-        ArrayList <Order> orders = new ArrayList <>();
+    protected List <Order> findOrders(OrderType type, JSONObject jsonObject, int limit) {
+        List <Order> orders = new ArrayList <>();
         try {
             for (int i = 0; i < limit; i++) {
                 if ("bids".equals(getJSONKey(type))) {
@@ -82,15 +82,18 @@ public class Bitfinex extends Exchange implements Runnable {
     }
 
 
-
     @Override
-    public HashMap <String, Pair> getMarket() {
+    public Map <String, Pair> getMarket() {
         return market;
     }
 
     @Override
-    public ArrayList <String> getPairs() {
+    public List <String> getPairs() {
         return pairs;
+    }
+
+    public BigDecimal getTakerTax() {
+        return takerTax;
     }
 
 }

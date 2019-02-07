@@ -1,20 +1,16 @@
 package services;
 
 import exchanges.*;
-import model.Router;
 
 import java.sql.Timestamp;
-import java.time.Instant;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
-import java.text.SimpleDateFormat;
 
 /**
  * Copyright (c) Anton on 17.11.2018.
@@ -23,22 +19,22 @@ import java.text.SimpleDateFormat;
 public class Updater {
  private static Updater instance;
  private static Timestamp timestamp;
- private ArrayList<Exchange> exchanges = new ArrayList <>();
+ private List<Exchange> exchanges = new ArrayList <>();
  private ExecutorService executorService = Executors.newCachedThreadPool();
  private List<Future> futures = new ArrayList<>();
 
 
   private Updater() {
-//        exchanges.add(new Binance());
+        exchanges.add(new Binance());
 //       exchanges.add(new Bitfinex());
         exchanges.add(new Bittrex());
         exchanges.add(new Exmo());
-//        exchanges.add(new LiveCoin());
-//        exchanges.add(new Poloniex());
+        exchanges.add(new LiveCoin());
+        exchanges.add(new Poloniex());
 //        exchanges.add(new Yobit());
-//        exchanges.add(new Kucoin());
-//        exchanges.add(new Hitbtc());
-//        exchanges.add(new Huobi());
+        exchanges.add(new Kucoin());
+        exchanges.add(new Hitbtc());
+        exchanges.add(new Huobi());
     }
 
     public static Updater getInstance() {
@@ -83,9 +79,9 @@ public class Updater {
         }
     }
 
-    public ArrayList <Exchange> getExchanges() {
+    public List <Exchange> getExchanges() {
         return exchanges;
     }
 
-    public static Timestamp getTimestamp() { return timestamp; }
+    static Timestamp getTimestamp() { return timestamp; }
 }

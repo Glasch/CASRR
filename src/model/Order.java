@@ -1,10 +1,8 @@
 package model;
 
 import exchanges.Exchange;
-import services.Updater;
 
 import java.math.BigDecimal;
-import java.util.Date;
 
 public class Order {
     private static int lastId = 1;
@@ -34,24 +32,16 @@ public class Order {
         return amount;
     }
 
-    public BigDecimal getRemainingAmount() {
+    BigDecimal getRemainingAmount() {
         return remainingAmount;
     }
 
-    public void subtractRemainingAmount(BigDecimal amount) {
+    void subtractRemainingAmount(BigDecimal amount) {
         remainingAmount = remainingAmount.subtract(amount);
-    }
-
-    public void setAmount(BigDecimal amount) {
-        this.amount = amount;
     }
 
     public Exchange getExchange() {
         return exchange;
-    }
-
-    public int getId() {
-        return id;
     }
 
     @Override

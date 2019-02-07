@@ -7,34 +7,33 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class LiveCoin extends Exchange implements Runnable {
+    private BigDecimal takerTax = BigDecimal.valueOf(0.0018);
+    private HashMap<String, Pair> market = new HashMap <>();
     private ArrayList<String> pairs = new ArrayList <String>() {{
-//        add("BTC/USD");
-//        add("ETH/USD");
-//        // add("BCH/USD");
-//        add("LTC/USD");
+        add("BTC/USD");
+        add("ETH/USD");
+        add("BCH/USD");
+        add("LTC/USD");
         add("ETH/BTC");
         add("LTC/BTC");
-//        //  add("BCH/BTC");
-//        add("DASH/BTC");
-
+        add("BCH/BTC");
+        add("DASH/BTC");
     }};
-    private HashMap<String, Pair> market = new HashMap <>();
-
-
 
     @Override
     protected String buildAPIRequest(String pair) {
         return  "https://api.livecoin.net/exchange/order_book?currencyPair=" + pair + "&depth=10";
     }
 
-    protected ArrayList<Order> findOrders(OrderType type, JSONObject jsonObject, int limit) {
-        ArrayList<Order> orders = new ArrayList <>();
+    protected List <Order> findOrders(OrderType type, JSONObject jsonObject, int limit) {
+        List<Order> orders = new ArrayList <>();
         try {
             JSONArray jsonObject1 = jsonObject.getJSONArray(getJSONKey(type));
             if (jsonObject1.length() < limit) limit = jsonObject1.length();
@@ -58,13 +57,16 @@ public class LiveCoin extends Exchange implements Runnable {
 
 
     @Override
-    public HashMap <String, Pair> getMarket() {
+    public Map <String, Pair> getMarket() {
         return market;
     }
 
     @Override
-    public ArrayList <String> getPairs() {
+    public List <String> getPairs() {
         return pairs;
     }
 
+    public BigDecimal getTakerTax() {
+        return takerTax;
+    }
 }

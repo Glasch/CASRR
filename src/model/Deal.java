@@ -2,7 +2,6 @@ package model;
 
 import services.UsdConverter;
 
-import java.io.IOException;
 import java.math.BigDecimal;
 
 /**
@@ -16,13 +15,13 @@ public class Deal {
     private BigDecimal spread;
     private BigDecimal valueInDollars;
     private BigDecimal taxFrom;
-    private  BigDecimal taxTo;
+    private BigDecimal taxTo;
 
-    public Deal(Route route, Order bid, Order ask) {
+    Deal(Route route, Order bid, Order ask) {
         this.route = route;
         this.bid = bid;
         this.ask = ask;
-        refreshEffectiveAmount(); //this.spread = calcSpread();
+       refreshEffectiveAmount();
     }
 
     void refreshEffectiveAmount() {
@@ -53,7 +52,7 @@ public class Deal {
         return value;
     }
 
-    public BigDecimal getEffectiveAmount() {
+    BigDecimal getEffectiveAmount() {
         return effectiveAmount;
     }
 
@@ -61,7 +60,7 @@ public class Deal {
         return route;
     }
 
-    public BigDecimal getSpread() {
+    BigDecimal getSpread() {
         return spread;
     }
 
@@ -73,33 +72,33 @@ public class Deal {
         return ask;
     }
 
-    public BigDecimal getValueInDollars() {
-        return valueInDollars;
-    }
-
     @Override
     public String toString() {
         return "Bid: " + bid + " Ask: " + ask + ". Effective Amount: " + effectiveAmount
                 + " Value in $: " + valueInDollars;
     }
 
-    public void setEffectiveAmount(BigDecimal effectiveAmount) {
+    void setEffectiveAmount(BigDecimal effectiveAmount) {
         this.effectiveAmount = effectiveAmount;
     }
 
-    public BigDecimal getTaxFrom() {
+    BigDecimal getTaxFrom() {
         return taxFrom;
     }
 
-    public void setTaxFrom(BigDecimal taxFrom) {
+    void setTaxFrom(BigDecimal taxFrom) {
         this.taxFrom = taxFrom;
     }
 
-    public BigDecimal getTaxTo() {
+    BigDecimal getTaxTo() {
         return taxTo;
     }
 
-    public void setTaxTo(BigDecimal taxTo) {
+    void setTaxTo(BigDecimal taxTo) {
         this.taxTo = taxTo;
+    }
+
+    BigDecimal getValueInDollars() {
+        return valueInDollars;
     }
 }

@@ -6,62 +6,61 @@ import model.Pair;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.IOException;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Objects;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Copyright (c) Anton on 18.10.2018.
  */
 public class Bittrex extends Exchange implements Runnable {
-    private boolean isMarketValid = true;
-    private ArrayList <String> pairs = new ArrayList <String>() {{
-//        add("BTC/USD");
-//        add("ETH/USD");
-        // add("BCH/USD");
-//        add("XRP/USD");
-//        add("ZEC/USD");
-//        add("ADA/USD");
-//        add("LTC/USD");
-//        add("TRX/USD");
-//        add("ETC/USD");
-//        add("USD/SC");
+    private BigDecimal takerTax = BigDecimal.valueOf(0.0025);
+    private Map <String, Pair> market = new HashMap <>();
+    private List <String> pairs = new ArrayList <String>() {{
+        add("BTC/USD");
+        add("ETH/USD");
+        add("BCH/USD");
+        add("XRP/USD");
+        add("ZEC/USD");
+        add("ADA/USD");
+        add("LTC/USD");
+        add("TRX/USD");
+        add("ETC/USD");
+        add("USD/SC");
         add("XRP/BTC");
         add("ETH/BTC");
-        //  add("BCH/BTC");
-//        add("XMR/BTC");
+        add("BCH/BTC");
+        add("XMR/BTC");
         add("LTC/BTC");
-//        add("ADA/BTC");
-//        add("XVG/BTC");
-//        add("BAT/BTC");
-//        add("TRX/BTC");
-//        add("XLM/BTC");
-//        add("BTC/SC");
-        //  add("BCH/ETH");
-//        add("ADA/ETH");
+        add("ADA/BTC");
+        add("XVG/BTC");
+        add("BAT/BTC");
+        add("TRX/BTC");
+        add("XLM/BTC");
+        add("BTC/SC");
+        add("BCH/ETH");
+        add("ADA/ETH");
         add("XRP/ETH");
-//        add("TRX/ETH");
-//        add("SC/ETH");
-//        add("DASH/ETH");
-//        add("ETC/ETH");
-//        add("XMR/ETH");
-//        add("XLM/ETH");
+        add("TRX/ETH");
+        add("SC/ETH");
+        add("DASH/ETH");
+        add("ETC/ETH");
+        add("XMR/ETH");
+        add("XLM/ETH");
         add("ZEC/ETH");
-//        add("ETC/ETH");
-//        add("NEO/ETH");
+        add("ETC/ETH");
+        add("NEO/ETH");
     }};
-    private HashMap <String, Pair> market = new HashMap <>();
-
-
 
     @Override
     protected String buildAPIRequest(String pair) {
         return "https://bittrex.com/api/v1.1/public/getorderbook?market=" + casting(pair) + "&type=both";
     }
 
-    protected ArrayList <Order> findOrders(OrderType type, JSONObject jsonObject, int limit) {
-        ArrayList <Order> orders = new ArrayList <>();
+    protected List <Order> findOrders(OrderType type, JSONObject jsonObject, int limit) {
+        List <Order> orders = new ArrayList <>();
         try {
             JSONObject jsonObject1 = jsonObject.getJSONObject("result");
             for (int i = 0; i < limit; i++) {
@@ -85,25 +84,19 @@ public class Bittrex extends Exchange implements Runnable {
         return res;
     }
 
-
     @Override
     String getJSONKey(OrderType orderType) {
         return orderType == OrderType.BID ? "buy" : "sell";
     }
 
     @Override
-    public HashMap <String, Pair> getMarket() {
+    public Map <String, Pair> getMarket() {
         return market;
     }
 
     @Override
-    public ArrayList <String> getPairs() {
+    public List <String> getPairs() {
         return pairs;
-    }
-
-    @Override
-    public boolean isMarketValid() {
-        return isMarketValid;
     }
 
     @Override
@@ -111,4 +104,7 @@ public class Bittrex extends Exchange implements Runnable {
         return super.getLastError();
     }
 
+    public BigDecimal getTakerTax() {
+        return takerTax;
+    }
 }

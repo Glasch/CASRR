@@ -7,8 +7,8 @@ import junit.framework.TestCase;
 import model.Stack;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 /*
@@ -41,10 +41,10 @@ public class StackBalancerUTest extends TestCase {
     public void testGetCurrencies() {
         Set <String> currencies = new HashSet <>();
         Updater updater = Updater.getInstance();
-        ArrayList <Exchange> exchanges = updater.getExchanges();
+        List <Exchange> exchanges = updater.getExchanges();
         for (Exchange exchange : exchanges) {
             if (exchange.getClass().getSimpleName().equals("Binance")) {
-                ArrayList <String> pairs = exchange.getPairs();
+                List<String> pairs = exchange.getPairs();
                 for (String pair : pairs) {
                     String[] split = pair.split("/");
                     currencies.add(split[0]);

@@ -1,43 +1,24 @@
 package model;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Copyright (c) Anton on 17.10.2018.
  */
 public class Pair {
     private String pairName;
-    private BigDecimal topBid;
-    private BigDecimal topAsk;
-    private ArrayList<Order> ordersAsks;
-    private ArrayList<Order> ordersBids;
+    private List<Order> ordersAsks;
+    private List<Order> ordersBids;
 
     public String getPairName() {
         return pairName;
-    }
-
-    public BigDecimal getTopBid() {
-        return topBid;
-    }
-
-    public BigDecimal getTopAsk() {
-        return topAsk;
     }
 
     public void setPairName(String pairName) {
         this.pairName = pairName;
     }
 
-    public void setTopBid(BigDecimal topBid) {
-        this.topBid = topBid;
-    }
-
-    public void setTopAsk(BigDecimal topAsk) {
-        this.topAsk = topAsk;
-    }
-
-    public ArrayList<Order> getOrders(OrderType type){
+    public List<Order> getOrders(OrderType type){
         switch (type){
             case BID:
                 return ordersBids;
@@ -46,7 +27,7 @@ public class Pair {
         }
     }
 
-    public void setOrders(OrderType type, ArrayList<Order> orders){
+    public void setOrders(OrderType type, List <Order> orders){
         switch (type){
             case ASK:
                 this.ordersAsks = orders;

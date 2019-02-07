@@ -1,58 +1,53 @@
 package  exchanges;
 
-import exchanges.Exchange;
 import model.Order;
 import model.OrderType;
 import model.Pair;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import java.math.BigDecimal;
 import java.util.*;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Objects;
 
 /**
  * Copyright (c) Anton on 17.10.2018.
  */
 public class Exmo extends Exchange implements Runnable {
-    private ArrayList<String> pairs = new ArrayList<String>() {{
-//        add("BTC/USD");
-//        add("ETH/USD");
-        //  add("BCH/USD");
-//        add("NEO/USD");
-//        add("ADA/USD");
-//        add("TRX/USD");
-//        add("XLM/USD");
-//        add("EOS/USD");
+    private BigDecimal takerTax = BigDecimal.valueOf(0.002);
+    private Map<String, Pair> market = new HashMap<>();
+    private List<String> pairs = new ArrayList<String>() {{
+        add("BTC/USD");
+        add("ETH/USD");
+        add("BCH/USD");
+        add("NEO/USD");
+        add("ADA/USD");
+        add("TRX/USD");
+        add("XLM/USD");
+        add("EOS/USD");
         add("XRP/BTC");
         add("ETH/BTC");
-        //add("BCH/BTC");
+        add("BCH/BTC");
         add("LTC/BTC");
-//        add("NEO/BTC");
-//        add("ADA/BTC");
-//        add("TRX/BTC");
-//        add("XLM/BTC");
-//        add("EOS/BTC");
-//        add("DASH/BTC");
-//        add("ETC/BTC");
+        add("NEO/BTC");
+        add("ADA/BTC");
+        add("TRX/BTC");
+        add("XLM/BTC");
+        add("EOS/BTC");
+        add("DASH/BTC");
+        add("ETC/BTC");
         add("ZEC/BTC");
-//        add("XMR/BTC");
-//        add("ADA/ETH");
-        //  add("BCH/ETH");
-
-
+        add("XMR/BTC");
+        add("ADA/ETH");
+        add("BCH/ETH");
     }};
-    private HashMap<String, Pair> market = new HashMap<>();
-
 
     @Override
     protected String buildAPIRequest(String pair) {
         return  "https://api.exmo.me/v1/order_book/?pair=" + casting(pair);
     }
 
-    protected ArrayList<Order> findOrders(OrderType type, JSONObject jsonObject, int limit) {
-        ArrayList<Order> orders = new ArrayList<>();
+    protected List <Order> findOrders(OrderType type, JSONObject jsonObject, int limit) {
+        List<Order> orders = new ArrayList<>();
         try {
             Iterator<String> keys = jsonObject.keys();
             String pairKey=keys.next();
@@ -84,13 +79,17 @@ public class Exmo extends Exchange implements Runnable {
     }
 
     @Override
-    public HashMap<String, Pair> getMarket() {
+    public Map <String, Pair> getMarket() {
         return market;
     }
 
     @Override
-    public ArrayList<String> getPairs() {
+    public List <String> getPairs() {
         return pairs;
+    }
+
+    public BigDecimal getTakerTax() {
+        return takerTax;
     }
 
 }

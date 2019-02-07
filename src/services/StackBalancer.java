@@ -7,6 +7,7 @@ import model.Stack;
 import java.math.BigDecimal;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Map;
 
 /*
  * Author: glaschenko
@@ -15,17 +16,17 @@ import java.util.HashMap;
 public class StackBalancer {
     private double maxLossPercent = 0.0;
     private BigDecimal totalStack;
-    private HashMap<Class, Stack> stacks = new HashMap<>();
+    private Map<Class, Stack> stacks = new HashMap<>();
 
-    public StackBalancer(Collection<Exchange> exchanges) {
+    StackBalancer(Collection <Exchange> exchanges) {
         exchanges.forEach(e -> stacks.put(e.getClass(), new Stack(e)));
     }
 
-    public HashMap<Class, Stack> getStacks() {
+    public Map<Class, Stack> getStacks() {
         return stacks;
     }
 
-    public Stack getStack(Class clazz) {
+    Stack getStack(Class clazz) {
         return stacks.get(clazz);
     }
 
@@ -73,15 +74,13 @@ public class StackBalancer {
                 }
             }
         }
-
-
     }
 
     private boolean isUSDPair(String pairName) {
         return pairName.contains("USD") && !pairName.contains("USDT");
     }
 
-    public void setMaxLossPercent(double maxLossPercent) {
+    void setMaxLossPercent(double maxLossPercent) {
         this.maxLossPercent = maxLossPercent;
     }
 }

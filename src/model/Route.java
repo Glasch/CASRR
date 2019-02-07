@@ -5,6 +5,7 @@ import exchanges.Exchange;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 
 /**
  * Copyright (c) Anton on 17.11.2018.
@@ -13,7 +14,7 @@ public class Route {
     private String pairName;
     private Exchange exchangeFrom;
     private Exchange exchangeTo;
-    private ArrayList<Deal> deals;
+    private List <Deal> deals;
     private BigDecimal routeValueInDollars;
     private BigDecimal routeAmountInDollars;
     private BigDecimal taxFrom;
@@ -21,24 +22,13 @@ public class Route {
 
     public Route(String pairName) {
         this.pairName = pairName;
-        deals = new ArrayList<>();
+        deals = new ArrayList <>();
     }
-
-//    public void calcEffectiveAmount() {
-//        UsdConverter converter = UsdConverter.getInstance();
-//        effectiveAmountInDollars = BigDecimal.ZERO;
-//        for (Deal deal : deals) {
-//            effectiveAmountInDollars = effectiveAmountInDollars.add(deal.getEffectiveAmount());
-//
-//        }
-//     converter.loadData();
-//     effectiveAmountInDollars = converter.convert(pairName,effectiveAmountInDollars);
-//    }
 
     public void applyUSDThreshold(BigDecimal threshold, boolean useFromExchangeRate) {
         BigDecimal remainingThreshold = threshold;
 
-        for (Iterator<Deal> iterator = deals.iterator(); iterator.hasNext(); ) {
+        for (Iterator <Deal> iterator = deals.iterator(); iterator.hasNext(); ) {
             Deal next = iterator.next();
             if (remainingThreshold.equals(BigDecimal.ZERO)) {
                 iterator.remove();
@@ -56,7 +46,7 @@ public class Route {
         }
     }
 
-    public void addDeal(Deal deal) {
+    void addDeal(Deal deal) {
         this.deals.add(deal);
     }
 
@@ -95,7 +85,7 @@ public class Route {
     }
 
     public void filterDeals(BigDecimal border) {
-        ArrayList<Deal> sorted = new ArrayList<>();
+        List <Deal> sorted = new ArrayList <>();
         for (Deal deal : deals) {
             if (deal.getSpread().compareTo(border) > 0) {
                 sorted.add(deal);
@@ -105,7 +95,7 @@ public class Route {
         deals = sorted;
     }
 
-    public void fillAllDeals(ArrayList<Exchange> exchanges) {
+    void fillAllDeals(List <Exchange> exchanges) {
         for (Exchange exchangeFrom : exchanges) {
             for (Exchange exchangeTo : exchanges) {
                 if (exchangeFrom.getMarket().containsKey(pairName) && exchangeTo.getMarket().containsKey(pairName)) {
@@ -123,11 +113,11 @@ public class Route {
         }
     }
 
-    public ArrayList<Deal> getSortedEVDeals() {
+    public List <Deal> getSortedEVDeals() {
         return deals;
     }
 
-    public String getPairName() {
+    String getPairName() {
         return pairName;
     }
 
@@ -160,19 +150,20 @@ public class Route {
         return routeAmountInDollars;
     }
 
-    public BigDecimal getTaxFrom() {
+    BigDecimal getTaxFrom() {
         return taxFrom;
     }
 
-    public void setTaxFrom(BigDecimal taxFrom) {
+    void setTaxFrom(BigDecimal taxFrom) {
         this.taxFrom = taxFrom;
     }
 
-    public BigDecimal getTaxTo() {
+    BigDecimal getTaxTo() {
         return taxTo;
     }
 
-    public void setTaxTo(BigDecimal taxTo) {
+    void setTaxTo(BigDecimal taxTo) {
         this.taxTo = taxTo;
     }
+
 }

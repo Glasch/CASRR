@@ -7,17 +7,17 @@ import model.Pair;
 import org.json.JSONObject;
 import services.ConnectionManager;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.math.BigDecimal;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Copyright (c) Anton on 23.10.2018.
  */
 public abstract class Exchange implements Runnable {
-    ExchangeAccount exchangeAccount;
+    BigDecimal takerTax;
+    private ExchangeAccount exchangeAccount;
     private boolean isMarketValid = true;
-
 
     @Override
     public void run() {
@@ -29,21 +29,15 @@ public abstract class Exchange implements Runnable {
         }
     }
 
-
-    protected Pair createPair(String pairName, JSONObject jsonObject, String request) {
+    private Pair createPair(String pairName, JSONObject jsonObject, String request) {
         Pair pair = new Pair();
         pair.setPairName(pairName);
         pair.setOrders(OrderType.ASK, findOrders(OrderType.ASK, jsonObject, 10));
         pair.setOrders(OrderType.BID, findOrders(OrderType.BID, jsonObject, 10));
-        try {
-            pair.setTopBid(pair.getOrders(OrderType.BID).get(0).getPrice());
-            pair.setTopAsk(pair.getOrders(OrderType.ASK).get(0).getPrice());
-        } catch (Exception ignored) {
-        }
         return pair;
     }
 
-    synchronized void validateMarket(HashMap <String, Pair> market) {
+    private synchronized void validateMarket(Map <String, Pair> market) {
         for (String pairName : market.keySet()) {
             if (market.get(pairName).getOrders(OrderType.BID) == null) {
                 this.getPairs().remove(pairName);
@@ -55,8 +49,7 @@ public abstract class Exchange implements Runnable {
         }
     }
 
-
-    protected void updateMarketData() {
+    private void updateMarketData() {
         for (String pairName : getPairs()) {
             String request = buildAPIRequest(pairName);
             JSONObject json = ConnectionManager.readJSONFromRequest(request);
@@ -71,28 +64,22 @@ public abstract class Exchange implements Runnable {
         validateMarket(getMarket());
     }
 
+    String getJSONKey(OrderType orderType) {
+        return orderType == OrderType.BID ? "bids" : "asks";
+    }
+
     protected abstract String buildAPIRequest(String pairName);
 
-    protected abstract ArrayList <Order> findOrders(OrderType type, JSONObject jsonObject, int limit);
+    protected abstract List <Order> findOrders(OrderType type, JSONObject jsonObject, int limit);
 
     protected abstract String casting(String pair);
 
+    public abstract Map <String, Pair> getMarket();
 
-    public abstract HashMap <String, Pair> getMarket();
-
-    public abstract ArrayList <String> getPairs();
+    public abstract List <String> getPairs();
 
     public String getLastError() {
         return this + " API Error";
-    }
-
-    @Override
-    public String toString() {
-        return this.getClass().getSimpleName();
-    }
-
-    String getJSONKey(OrderType orderType) {
-        return orderType == OrderType.BID ? "bids" : "asks";
     }
 
     public boolean isMarketValid() {
@@ -106,4 +93,13 @@ public abstract class Exchange implements Runnable {
     public void setExchangeAccount(ExchangeAccount exchangeAccount) {
         this.exchangeAccount = exchangeAccount;
     }
+
+    public BigDecimal getTakerTax() { return takerTax; }
+
+    @Override
+    public String toString() {
+        return this.getClass().getSimpleName();
+    }
+
+
 }

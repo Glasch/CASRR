@@ -1,17 +1,13 @@
 package model;
 
 import exchanges.Binance;
-import exchanges.Bittrex;
 import exchanges.Exchange;
-import exchanges.Exmo;
+import exchanges.Poloniex;
 import junit.framework.TestCase;
 import org.junit.Assert;
-import org.junit.Test;
 import services.Updater;
-import services.UsdConverter;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 
 /**
  * Copyright (c) Anton on 28.01.2019.
@@ -34,17 +30,20 @@ public class TraderUTest extends TestCase {
                 bid1.setExchange(exchange);
                 route.setExchangeFrom(exchange);
             }
-            if (exchange instanceof Bittrex){
+            if (exchange instanceof Poloniex){
                 ask.setExchange(exchange);
                 ask1.setExchange(exchange);
                 route.setExchangeTo(exchange);
             }
         }
 
+
         Deal deal = new Deal(route,bid,ask);
         Deal deal1 = new Deal(route,bid1,ask1);
+
         route.addDeal(deal);
         route.addDeal(deal1);
+
         Trader trader = new Trader();
 
         BigDecimal btcTot = BigDecimal.ZERO;
@@ -96,8 +95,9 @@ public class TraderUTest extends TestCase {
         System.out.println("ETH TOT:" + ethTot + " " + ethTot.multiply(BigDecimal.valueOf(105)) + " S");
         System.out.println( "Before: " + totInSBefore + " After: " + totInS);
 
-        Assert.assertTrue(  ( totInS.subtract(totInSBefore).compareTo(BigDecimal.valueOf(0)) == 1 &&
-                                totInS.subtract(totInSBefore).compareTo(BigDecimal.valueOf(0.001)) == -1 ) ? true : false );
+        System.out.println(totInS.subtract(totInSBefore).abs().divide(totInSBefore,10,BigDecimal.ROUND_HALF_UP));
+        Assert.assertTrue( totInS.subtract(totInSBefore).abs().divide(totInSBefore,10,BigDecimal.ROUND_HALF_UP)
+                .compareTo(BigDecimal.valueOf(0.001)) < 1);
 
     }
 }

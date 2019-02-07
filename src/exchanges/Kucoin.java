@@ -3,54 +3,50 @@ package  exchanges;
 import model.Order;
 import model.OrderType;
 import model.Pair;
-import org.json.JSONArray;
 import org.json.JSONObject;
 
-import java.io.IOException;
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Objects;
+import java.util.*;
 
 /**
  * Copyright (c) Anton on 17.10.2018.
  */
 public class Kucoin extends Exchange implements Runnable {
+    private BigDecimal takerTax = BigDecimal.valueOf(0.001);
+    private Map<String, Pair> market = new HashMap<>();
     private ArrayList<String> pairs = new ArrayList<String>() {{
-//        add("BTC/USDT");
-//        add("ETH/USDT");
-//        add("EOS/USDT");
-//        add("GO/USDT");
-//        add("LTC/USDT");
-//        add("XLM/USDT");
-//        add("NEO/USDT");
-//        add("ETC/USDT");
-//        add("TRX/USDT");
+        add("BTC/USDT");
+        add("ETH/USDT");
+        add("EOS/USDT");
+        add("GO/USDT");
+        add("LTC/USDT");
+        add("XLM/USDT");
+        add("NEO/USDT");
+        add("ETC/USDT");
+        add("TRX/USDT");
         add("ETH/BTC");
-//        add("AOA/BTC");
-//        add("GO/BTC");
-//        add("XLM/BTC");
-//        add("NEO/BTC");
+        add("AOA/BTC");
+        add("GO/BTC");
+        add("XLM/BTC");
+        add("NEO/BTC");
         add("LTC/BTC");
-//        add("EOS/BTC");
-//        add("TRX/BTC");
-//        add("AOA/ETH");
-//        add("HAV/ETH");
-//        add("GO/ETH");
-//        add("NEO/ETH");
-//        add("XLM/ETH");
-//        add("TRX/ETH");
-//        add("EOS/ETH");
+        add("EOS/BTC");
+        add("TRX/BTC");
+        add("AOA/ETH");
+        add("HAV/ETH");
+        add("GO/ETH");
+        add("NEO/ETH");
+        add("XLM/ETH");
+        add("TRX/ETH");
+        add("EOS/ETH");
     }};
-    private HashMap<String, Pair> market = new HashMap<>();
 
     @Override
     protected String buildAPIRequest(String pair) {
         return "https://api.kucoin.com/v1/open/orders?symbol=" + casting(pair) + "&limit=10";
     }
 
-    protected ArrayList<Order> findOrders(OrderType type, JSONObject jsonObject, int limit) {
+    protected List <Order> findOrders(OrderType type, JSONObject jsonObject, int limit) {
         ArrayList<Order> orders = new ArrayList<>();
         try {
             Iterator<String> keys = jsonObject.keys();
@@ -87,13 +83,17 @@ public class Kucoin extends Exchange implements Runnable {
     }
 
     @Override
-    public HashMap<String, Pair> getMarket() {
+    public Map <String, Pair> getMarket() {
         return market;
     }
 
     @Override
-    public ArrayList<String> getPairs() {
+    public List <String> getPairs() {
         return pairs;
+    }
+
+    public BigDecimal getTakerTax() {
+        return takerTax;
     }
 
 }

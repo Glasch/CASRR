@@ -1,23 +1,22 @@
 package services;
 
-import java.io.IOException;
+import org.json.JSONObject;
+
 import java.math.BigDecimal;
 import java.util.HashMap;
-
-import org.json.JSONObject;
+import java.util.Map;
 
 public class UsdConverter {
     private static UsdConverter instance;
 
-    private static final HashMap<String, Integer> currencyIds = new HashMap<String, Integer>() {{
+    private static final Map<String, Integer> currencyIds = new HashMap <String, Integer>() {{
         put("BTC", 1);
         put("ETH", 1027);
     }};
 
-    private HashMap<String, BigDecimal> currencyPrices = new HashMap<String, BigDecimal>() {{
+    private Map <String, BigDecimal> currencyPrices = new HashMap <String, BigDecimal>() {{
         put("USD", BigDecimal.valueOf(1));
         put("USDT", BigDecimal.valueOf(1));
-        put("BTC", BigDecimal.valueOf(3555));
     }};
 
     public static UsdConverter getInstance() {
@@ -27,17 +26,14 @@ public class UsdConverter {
         return instance;
     }
 
-    private UsdConverter() {
-    }
-
-    public void loadData() {
+    void loadData() {
         for (String currencyName : currencyIds.keySet()) {
             JSONObject coinListings = ConnectionManager.readJSONFromRequest("https://api.coinmarketcap.com/v2/ticker/" +
-                    currencyIds.get(currencyName).toString());
+                currencyIds.get(currencyName));
             if (coinListings == null) {
                 System.out.println(getClass().getName() + ": unable to get coin listings for " + currencyName + " to dollar");
             } else {
-                this.currencyPrices.put(currencyName,
+                currencyPrices.put(currencyName,
                         coinListings.getJSONObject("data").getJSONObject("quotes").getJSONObject("USD").getBigDecimal("price"));
             }
         }
@@ -47,5 +43,9 @@ public class UsdConverter {
     public BigDecimal convert(String pair, BigDecimal Quantity) {
         String[] sub = pair.split("/");
         return currencyPrices.get(sub[1]).multiply(Quantity);
+    }
+
+    Map <String, BigDecimal> getCurrencyPrices() {
+        return currencyPrices;
     }
 }
