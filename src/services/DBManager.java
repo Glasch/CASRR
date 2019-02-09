@@ -67,7 +67,7 @@ public class DBManager {
                 "where \"timestamp\" = '" + timestamp + "'";
         PreparedStatement statement = connection.prepareStatement(sql);
         ResultSet resultSet = statement.executeQuery();
-        if (resultSet.next()) {
+        while (resultSet.next()) {
             Exchange exchange = idToExchange.get(resultSet.getInt("exchange_id"));
             String pair = idToPair.get(resultSet.getInt("pair_id"));
             JSONObject marketJs = new JSONObject(resultSet.getString("market"));

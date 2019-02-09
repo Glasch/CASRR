@@ -8,8 +8,10 @@ import services.DBManager;
 import services.Reporter;
 import services.Updater;
 
+import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.Timestamp;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -22,6 +24,7 @@ public class Main {
     private static int count = 0;
 
     public static void main(String[] args) throws Exception {
+
         Updater updater = Updater.getInstance();
         DBManager dbManager = new DBManager(updater);
         Reporter reporter = new Reporter();
@@ -32,6 +35,7 @@ public class Main {
         Set <Timestamp> timestamps = dbManager.getTimestamps(connection);
         connection.close();
         System.out.println(timestamps.size());
+        Map<String,BigDecimal> before = reporter.calcGlobalAccount(updater);
         for (Timestamp timestamp : timestamps) {
 //         dbManager.saveStaticData();
 //          updater.update();
@@ -45,8 +49,12 @@ public class Main {
             for (Exchange exchange : updater.getExchanges()) {
                 exchange.getMarket().clear();
             }
-            reporter.showAcceptedRoutes(trader, false);
+            Map<String,BigDecimal> after = reporter.calcGlobalAccount(updater);
+            for (String currency : after.keySet()) {
+                after.merge(currency,before.get(currency),BigDecimal::subtract);
+            }
             reporter.showExchangeAccounts(true);
+            reporter.printGlobalAccount(after);
             System.out.println(++count);
         }
     }

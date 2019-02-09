@@ -14,7 +14,24 @@ import java.util.Map;
  * Copyright (c) Anton on 05.02.2019.
  */
 public class Reporter {
-    private Map<String, Integer> pairRepeats;
+    private Map <String, Integer> pairRepeats;
+
+    public Map<String, BigDecimal> calcGlobalAccount(Updater updater) {
+        Map<String,BigDecimal> resMap = new HashMap <>();
+        for (Exchange exchange : updater.getExchanges()) {
+            for (String pair : exchange.getExchangeAccount().getBalances().keySet()) {
+                if (!resMap.containsKey(pair)) resMap.put(pair,exchange.getExchangeAccount().getBalances().get(pair));
+                else resMap.merge(pair,exchange.getExchangeAccount().getBalances().get(pair),BigDecimal::add);
+            }
+        }
+        return resMap;
+    }
+
+    public void printGlobalAccount(Map <String, BigDecimal> resMap) {
+        for (String pair : resMap.keySet()) {
+            System.out.println(pair + " : " + resMap.get(pair));
+        }
+    }
 
     public void showPairRepeats() {
         pairRepeats = new HashMap <>();
@@ -29,10 +46,10 @@ public class Reporter {
         printPairRepeats(exchanges);
     }
 
-    public void showAcceptedRoutes(Trader trader, boolean withDeals){
+    public void showAcceptedRoutes(Trader trader, boolean withDeals) {
         for (Route route : trader.getAcceptedRoutes()) {
             System.out.println(route);
-            if (withDeals){
+            if (withDeals) {
                 for (Deal deal : route.getSortedEVDeals()) {
                     System.out.println(deal);
                 }
@@ -40,34 +57,34 @@ public class Reporter {
         }
     }
 
-    public void showExchangeAccounts(Boolean withDiff){
+    public void showExchangeAccounts(Boolean withDiff) {
         Updater updater = Updater.getInstance();
         List <Exchange> exchanges = updater.getExchanges();
         for (Exchange exchange : exchanges) {
             System.out.println(exchange);
-            for ( String pair : exchange.getExchangeAccount().getBalances().keySet()) {
-                if (withDiff){
-                System.out.println(pair + " " + exchange.getExchangeAccount().getBalances().get(pair).subtract(BigDecimal.valueOf(1000000000)));
-                }else {
-                System.out.println(pair + " " + exchange.getExchangeAccount().getBalances().get(pair));
+            for (String pair : exchange.getExchangeAccount().getBalances().keySet()) {
+                if (withDiff) {
+                    System.out.println(pair + " " + exchange.getExchangeAccount().getBalances().get(pair).subtract(BigDecimal.valueOf(1000000000)));
+                } else {
+                    System.out.println(pair + " " + exchange.getExchangeAccount().getBalances().get(pair));
                 }
             }
         }
     }
 
-    public  void showConverterData(UsdConverter usdConverter){
+    public void showConverterData(UsdConverter usdConverter) {
         for (String currency : usdConverter.getCurrencyPrices().keySet()) {
             System.out.println(currency + " " + usdConverter.getCurrencyPrices().get(currency) + " USD");
         }
     }
 
-    private void printPairRepeats(List<Exchange> exchanges) {
+    private void printPairRepeats(List <Exchange> exchanges) {
         for (String pair : pairRepeats.keySet()) {
             System.out.println(pair + " : " + pairRepeats.get(pair) + checkExchanges(pair, exchanges));
         }
     }
 
-    private String checkExchanges(String pair, List<Exchange> exchanges) {
+    private String checkExchanges(String pair, List <Exchange> exchanges) {
         StringBuilder res = new StringBuilder();
         for (Exchange exchange : exchanges) {
             if (exchange.getPairs().contains(pair)) {
