@@ -44,7 +44,7 @@ public class Main {
             Router router = new Router(updater);
             Trader trader = new Trader();
             for (Route route : router.getResultingRoutes()) {
-                trader.makeDeal(route);
+                trader.makeDeal(route, false);
             }
             for (Exchange exchange : updater.getExchanges()) {
                 exchange.getMarket().clear();

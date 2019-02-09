@@ -10,7 +10,10 @@ import java.util.List;
 public class Trader {
    private List<Route> acceptedRoutes = new ArrayList <>();
 
-    public void makeDeal(Route route) {
+    public void makeDeal(Route route, boolean withUSD) {
+        if (!withUSD){
+            if (route.getPairName().contains("USD")) return;
+        }
         BigDecimal totFromTax = BigDecimal.ZERO;
         BigDecimal totToTax = BigDecimal.ZERO;
 
