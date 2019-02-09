@@ -50,7 +50,7 @@ public class ConnectionManager {
         return jsonObject;
     }
 
-    static Connection getDBconnection(String url, String login, String password) throws SQLException, ClassNotFoundException {
+   public static Connection getDBconnection(String url, String login, String password) throws SQLException, ClassNotFoundException {
         Class.forName("org.postgresql.Driver");
         return DriverManager.getConnection(url, login, password);
     }

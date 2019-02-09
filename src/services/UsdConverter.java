@@ -42,7 +42,7 @@ public class UsdConverter {
 
     public BigDecimal convert(String pair, BigDecimal Quantity) {
         String[] sub = pair.split("/");
-        return currencyPrices.get(sub[1]).multiply(Quantity);
+        return BigDecimal.ZERO;  //currencyPrices.get(sub[1]).multiply(Quantity);
     }
 
     Map <String, BigDecimal> getCurrencyPrices() {

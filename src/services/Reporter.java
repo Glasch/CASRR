@@ -5,6 +5,7 @@ import model.Deal;
 import model.Route;
 import model.Trader;
 
+import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -39,13 +40,17 @@ public class Reporter {
         }
     }
 
-    public void showExchangeAccounts(){
+    public void showExchangeAccounts(Boolean withDiff){
         Updater updater = Updater.getInstance();
         List <Exchange> exchanges = updater.getExchanges();
         for (Exchange exchange : exchanges) {
             System.out.println(exchange);
             for ( String pair : exchange.getExchangeAccount().getBalances().keySet()) {
+                if (withDiff){
+                System.out.println(pair + " " + exchange.getExchangeAccount().getBalances().get(pair).subtract(BigDecimal.valueOf(1000000000)));
+                }else {
                 System.out.println(pair + " " + exchange.getExchangeAccount().getBalances().get(pair));
+                }
             }
         }
     }
