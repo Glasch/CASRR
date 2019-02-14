@@ -19,6 +19,7 @@ public class DbAnalyzeReport {
                     possibleRoute.setAmount(possibleRoute.getAmount().add(route.getAmount()));
                     possibleRoute.setTaxFrom(possibleRoute.getTaxFrom().add(route.getTaxFrom()));
                     possibleRoute.setTaxTo(possibleRoute.getTaxTo().add(route.getTaxTo()));
+                    possibleRoute.getDeals().addAll(route.getSortedEVDeals());
                     possibleRoute.calcRouteSpread(possibleRoute.getDeals());
                 }
             }

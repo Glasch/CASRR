@@ -31,6 +31,7 @@ public class Route {
         this.pairName = pairName;
         this.exchangeFrom = exchangeFrom;
         this.exchangeTo = exchangeTo;
+        deals = new ArrayList <>();
     }
 
     public void applyUSDThreshold(BigDecimal threshold, boolean useFromExchangeRate) {
@@ -114,8 +115,9 @@ public class Route {
     }
 
     public void calcRouteSpread(List <Deal> deals) {
+        if (deals.isEmpty()) return;
         for (Deal deal : deals) {
-            this.setSpread(this.getSpread().add(deal.getSpread().multiply(deal.getEffectiveAmount().divide(this.getAmount(), 10, BigDecimal.ROUND_HALF_DOWN))));
+            this.setSpread(this.getSpread().add(deal.getSpread().multiply(deal.getEffectiveAmount().divide(this.getAmount(), 5, BigDecimal.ROUND_HALF_DOWN))));
         }
     }
 
