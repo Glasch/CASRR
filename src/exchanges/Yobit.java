@@ -23,7 +23,7 @@ public class Yobit extends Exchange implements Runnable {
         add("WAVES/BTC");
         add("DOGE/BTC");
         add("XRP/BTC");
-        add("BTC/USD");
+//        add("BTC/USD");
     }};
 
     @Override

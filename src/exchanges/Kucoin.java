@@ -15,15 +15,15 @@ public class Kucoin extends Exchange implements Runnable {
     private BigDecimal takerTax = BigDecimal.valueOf(0.001);
     private Map<String, Pair> market = new HashMap<>();
     private ArrayList<String> pairs = new ArrayList<String>() {{
-        add("BTC/USDT");
-        add("ETH/USDT");
-        add("EOS/USDT");
-        add("GO/USDT");
-        add("LTC/USDT");
-        add("XLM/USDT");
-        add("NEO/USDT");
-        add("ETC/USDT");
-        add("TRX/USDT");
+//        add("BTC/USDT");
+//        add("ETH/USDT");
+//        add("EOS/USDT");
+//        add("GO/USDT");
+//        add("LTC/USDT");
+//        add("XLM/USDT");
+//        add("NEO/USDT");
+//        add("ETC/USDT");
+//        add("TRX/USDT");
         add("ETH/BTC");
         add("AOA/BTC");
         add("GO/BTC");

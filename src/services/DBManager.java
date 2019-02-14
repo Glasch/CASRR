@@ -55,11 +55,11 @@ public class DBManager {
         connection.close();
     }
 
-    public void getMarketsFromDB(Updater updater, Timestamp timestamp) throws SQLException, ClassNotFoundException {
-        Connection connection = ConnectionManager.getDBconnection(url, login, password);
-        Map <Integer, Exchange> idToExchange = getIdToExchange(updater, connection);
-        Map <Integer, String> idToPair = getIdToPair(updater, connection);
-
+    public void getMarketsFromDB(
+            Timestamp timestamp,
+            Map <Integer, Exchange> idToExchange,
+            Map <Integer, String> idToPair,
+            Connection connection) throws SQLException, ClassNotFoundException {
         String sql = "select market, market.exchange_id, market.pair_id\n" +
                 "from public.\"order\"\n" +
                 "join market\n" +
@@ -73,8 +73,8 @@ public class DBManager {
             JSONObject marketJs = new JSONObject(resultSet.getString("market"));
             savaDataToExchange(exchange, pair, marketJs);
         }
-        connection.close();
     }
+
 
     private void savaDataToExchange(Exchange exchange, String pair, JSONObject marketJs) {
         List <Order> bidsList = getOrderListFromJson(exchange, marketJs, OrderType.BID);
@@ -108,7 +108,7 @@ public class DBManager {
         return timestamps;
     }
 
-    private Map <Integer, Exchange> getIdToExchange(Updater updater, Connection connection) throws SQLException {
+    public Map <Integer, Exchange> getIdToExchange(Updater updater, Connection connection) throws SQLException {
         Map <Integer, Exchange> exchangeToId = new HashMap <>();
         for (Exchange exchange : updater.getExchanges()) {
             ResultSet resultSet = getExchangeResultSet(connection, exchange);
@@ -119,7 +119,7 @@ public class DBManager {
         return exchangeToId;
     }
 
-    private Map <Integer, String> getIdToPair(Updater updater, Connection connection) throws SQLException {
+    public Map <Integer, String> getIdToPair(Updater updater, Connection connection) throws SQLException {
         Map <Integer, String> pairToId = new HashMap <>();
         Set <String> pairs = new HashSet <>();
         for (Exchange exchange : updater.getExchanges()) {

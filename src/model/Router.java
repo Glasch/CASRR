@@ -18,10 +18,7 @@ public class Router {
     public Router(Updater updater) {
         exchanges = updater.getExchanges();
 
-        Set <String> allPairs = new HashSet <>();
-        for (Exchange exchange : exchanges) {
-            allPairs.addAll(exchange.getPairs());
-        }
+        Set <String> allPairs = findAllPairs();
 
         masterRoutes = findRoutes(exchanges, allPairs);
         for (Route route : masterRoutes) {
@@ -51,6 +48,19 @@ public class Router {
         resultingRoutes.forEach(Route::refreshRouteValueInDollars);
         sort(masterRoutes);
         sort(resultingRoutes);
+
+        for (Route resultingRoute : resultingRoutes) {
+            for (Deal deal  : resultingRoute.getSortedEVDeals())
+                resultingRoute.setAmount(resultingRoute.getAmount().add(deal.getEffectiveAmount()));
+        }
+    }
+
+    public Set <String> findAllPairs() {
+        Set <String> allPairs = new HashSet<>();
+        for (Exchange exchange : exchanges) {
+            allPairs.addAll(exchange.getPairs());
+        }
+        return allPairs;
     }
 
     private void sort(List <Route> routes) {
@@ -81,7 +91,7 @@ public class Router {
         }
     }
 
-    private List <Route> findRoutes(List <Exchange> exchanges, Set <String> allPairs) {
+    public List <Route> findRoutes(List <Exchange> exchanges, Set <String> allPairs) {
         List <Route> masterRoutes = new ArrayList <>();
         for (String pairName : allPairs) {
             Route masterRoute = new Route(pairName);
@@ -97,5 +107,9 @@ public class Router {
 
     public List <Route> getResultingRoutes() {
         return resultingRoutes;
+    }
+
+    public List <Route> getMasterRoutes() {
+        return masterRoutes;
     }
 }

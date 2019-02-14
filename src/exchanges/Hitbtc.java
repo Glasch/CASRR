@@ -15,16 +15,16 @@ public class Hitbtc extends Exchange implements Runnable {
     private BigDecimal takerTax = BigDecimal.valueOf(0.001);
     private Map<String, Pair> market = new HashMap<>();
     private List<String> pairs = new ArrayList<String>() {{
-        add("BTC/USD");
-        add("ETH/USD");
-        add("XRP/USDT");
-        add("EOS/USD");
-        add("LTC/USD");
-        add("ZEC/USD");
-        add("NEO/USD");
-        add("DASH/USD");
-        add("TRX/USD");
-        add("XLM/USD");
+//        add("BTC/USD");
+//        add("ETH/USD");
+//        add("XRP/USDT");
+//        add("EOS/USD");
+//        add("LTC/USD");
+//        add("ZEC/USD");
+//        add("NEO/USD");
+//        add("DASH/USD");
+//        add("TRX/USD");
+//        add("XLM/USD");
         add("XRP/BTC");
         add("ETH/BTC");
         add("DASH/BTC");

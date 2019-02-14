@@ -16,14 +16,14 @@ public class Exmo extends Exchange implements Runnable {
     private BigDecimal takerTax = BigDecimal.valueOf(0.002);
     private Map<String, Pair> market = new HashMap<>();
     private List<String> pairs = new ArrayList<String>() {{
-        add("BTC/USD");
-        add("ETH/USD");
-        add("BCH/USD");
-        add("NEO/USD");
-        add("ADA/USD");
-        add("TRX/USD");
-        add("XLM/USD");
-        add("EOS/USD");
+//        add("BTC/USD");
+//        add("ETH/USD");
+//        add("BCH/USD");
+//        add("NEO/USD");
+//        add("ADA/USD");
+//        add("TRX/USD");
+//        add("XLM/USD");
+//        add("EOS/USD");
         add("XRP/BTC");
         add("ETH/BTC");
         add("BCH/BTC");

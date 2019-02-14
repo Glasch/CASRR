@@ -1,6 +1,7 @@
 package services;
 
 import exchanges.Exchange;
+import model.DbAnalyzeReport;
 import model.Deal;
 import model.Route;
 import model.Trader;
@@ -16,12 +17,12 @@ import java.util.Map;
 public class Reporter {
     private Map <String, Integer> pairRepeats;
 
-    public Map<String, BigDecimal> calcGlobalAccount(Updater updater) {
-        Map<String,BigDecimal> resMap = new HashMap <>();
+    public Map <String, BigDecimal> calcGlobalAccount(Updater updater) {
+        Map <String, BigDecimal> resMap = new HashMap <>();
         for (Exchange exchange : updater.getExchanges()) {
             for (String pair : exchange.getExchangeAccount().getBalances().keySet()) {
-                if (!resMap.containsKey(pair)) resMap.put(pair,exchange.getExchangeAccount().getBalances().get(pair));
-                else resMap.merge(pair,exchange.getExchangeAccount().getBalances().get(pair),BigDecimal::add);
+                if (!resMap.containsKey(pair)) resMap.put(pair, exchange.getExchangeAccount().getBalances().get(pair));
+                else resMap.merge(pair, exchange.getExchangeAccount().getBalances().get(pair), BigDecimal::add);
             }
         }
         return resMap;
@@ -30,6 +31,20 @@ public class Reporter {
     public void printGlobalAccount(Map <String, BigDecimal> resMap) {
         for (String pair : resMap.keySet()) {
             System.out.println(pair + " : " + resMap.get(pair));
+        }
+    }
+
+    public void showDbAnalyzeReport(DbAnalyzeReport dbAnalyzeReport, Boolean withDeals) {
+        for (Route route : dbAnalyzeReport.getPossibleRoutes()) {
+            if (route.getAmount().compareTo(BigDecimal.ZERO) > 0) {
+                System.out.println(route);
+            }
+            if (withDeals) {
+                if (route.getSortedEVDeals() == null) continue;
+                for (Deal deal : route.getSortedEVDeals()) {
+                    System.out.println(deal);
+                }
+            }
         }
     }
 

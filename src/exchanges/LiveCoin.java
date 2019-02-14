@@ -17,10 +17,10 @@ public class LiveCoin extends Exchange implements Runnable {
     private BigDecimal takerTax = BigDecimal.valueOf(0.0018);
     private HashMap<String, Pair> market = new HashMap <>();
     private ArrayList<String> pairs = new ArrayList <String>() {{
-        add("BTC/USD");
-        add("ETH/USD");
-        add("BCH/USD");
-        add("LTC/USD");
+//        add("BTC/USD");
+//        add("ETH/USD");
+//        add("BCH/USD");
+//        add("LTC/USD");
         add("ETH/BTC");
         add("LTC/BTC");
         add("BCH/BTC");

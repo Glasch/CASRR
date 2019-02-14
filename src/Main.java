@@ -1,8 +1,5 @@
 import exchanges.Exchange;
-import model.ExchangeAccount;
-import model.Route;
-import model.Router;
-import model.Trader;
+import model.*;
 import services.ConnectionManager;
 import services.DBManager;
 import services.Reporter;
@@ -31,32 +28,44 @@ public class Main {
         for (Exchange exchange : updater.getExchanges()) {
             exchange.setExchangeAccount(new ExchangeAccount(exchange));
         }
+        System.out.println("Создаем Коннекшен!");
         Connection connection = ConnectionManager.getDBconnection(url, login, password);
+        System.out.println("OK!");
         Set <Timestamp> timestamps = dbManager.getTimestamps(connection);
-        connection.close();
+        Map <Integer, Exchange> idToExchange = dbManager.getIdToExchange(updater, connection);
+        Map <Integer, String> idToPair = dbManager.getIdToPair(updater, connection);
         System.out.println(timestamps.size());
         Map<String,BigDecimal> before = reporter.calcGlobalAccount(updater);
+        DbAnalyzeReport dbAnalyzeReport = new DbAnalyzeReport();
+        dbAnalyzeReport.initPossibleRoutes(new Router(updater));
         for (Timestamp timestamp : timestamps) {
+            System.out.println("-----------------------------NEW TIMESTAMP---------------------------------");
 //         dbManager.saveStaticData();
 //          updater.update();
 //          dbManager.saveOrders();
-            dbManager.getMarketsFromDB(updater, timestamp);
+            dbManager.getMarketsFromDB(timestamp, idToExchange, idToPair, connection);
             Router router = new Router(updater);
             Trader trader = new Trader();
+            reporter.showAcceptedRoutes(trader,true);
             for (Route route : router.getResultingRoutes()) {
-                trader.makeDeal(route, false);
+                trader.makeDeal(route);
             }
-            for (Exchange exchange : updater.getExchanges()) {
-                exchange.getMarket().clear();
-            }
+//            reporter.showAcceptedRoutes(trader,true);
             Map<String,BigDecimal> after = reporter.calcGlobalAccount(updater);
             for (String currency : after.keySet()) {
                 after.merge(currency,before.get(currency),BigDecimal::subtract);
             }
             reporter.showExchangeAccounts(true);
+            dbAnalyzeReport.updatePossibleRoutesData(router);
+            reporter.showDbAnalyzeReport(dbAnalyzeReport,false);
+            System.out.println("--------------GLOBAL---------------");
             reporter.printGlobalAccount(after);
             System.out.println(++count);
+            for (Exchange exchange : updater.getExchanges()) {
+                exchange.getMarket().clear();
+            }
         }
+        connection.close();
     }
 }
 

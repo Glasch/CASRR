@@ -17,12 +17,20 @@ public class Route {
     private List <Deal> deals;
     private BigDecimal routeValueInDollars;
     private BigDecimal routeAmountInDollars;
-    private BigDecimal taxFrom;
-    private BigDecimal taxTo;
+    private BigDecimal taxFrom = BigDecimal.ZERO;
+    private BigDecimal taxTo = BigDecimal.ZERO;
+    private BigDecimal amount = BigDecimal.ZERO;
+    private BigDecimal spread = BigDecimal.ZERO;
 
     public Route(String pairName) {
         this.pairName = pairName;
         deals = new ArrayList <>();
+    }
+
+    public Route(String pairName, Exchange exchangeFrom, Exchange exchangeTo) {
+        this.pairName = pairName;
+        this.exchangeFrom = exchangeFrom;
+        this.exchangeTo = exchangeTo;
     }
 
     public void applyUSDThreshold(BigDecimal threshold, boolean useFromExchangeRate) {
@@ -105,6 +113,12 @@ public class Route {
         }
     }
 
+    public void calcRouteSpread(List <Deal> deals) {
+        for (Deal deal : deals) {
+            this.setSpread(this.getSpread().add(deal.getSpread().multiply(deal.getEffectiveAmount().divide(this.getAmount(), 10, BigDecimal.ROUND_HALF_DOWN))));
+        }
+    }
+
     public void addDealsForExchangesPair(Exchange from, Exchange to) {
         for (Order orderFrom : from.getMarket().get(getPairName()).getOrders(OrderType.BID)) {
             for (Order orderTo : to.getMarket().get(getPairName()).getOrders(OrderType.ASK)) {
@@ -143,7 +157,11 @@ public class Route {
 
     @Override
     public String toString() {
-        return exchangeFrom + " ---> " + exchangeTo + " " + pairName + " " + getRouteValueInDollars();
+        return "\n" + exchangeFrom + " ---> " + exchangeTo + " " + pairName +
+                "\n Amount: " + amount +
+                "\n TaxFrom: " + taxFrom +
+                "\n TaxTo: " + taxTo +
+                "\n Spread: " + spread;
     }
 
     public BigDecimal getRouteAmountInDollars() {
@@ -166,4 +184,27 @@ public class Route {
         this.taxTo = taxTo;
     }
 
+    public BigDecimal getAmount() {
+        return amount;
+    }
+
+    public void setAmount(BigDecimal amount) {
+        this.amount = amount;
+    }
+
+    public BigDecimal getSpread() {
+        return spread;
+    }
+
+    public void setSpread(BigDecimal spread) {
+        this.spread = spread;
+    }
+
+    public void setDeals(List <Deal> deals) {
+        this.deals = deals;
+    }
+
+    public List <Deal> getDeals() {
+        return deals;
+    }
 }

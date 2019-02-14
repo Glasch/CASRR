@@ -15,16 +15,16 @@ public class Bitfinex extends Exchange implements Runnable {
     private BigDecimal takerTax = BigDecimal.valueOf(0.001);
     private Map <String, Pair> market = new HashMap <>();
     private List <String> pairs = new ArrayList <String>() {{
-        add("BTC/USD");
-        add("ETH/USD");
-        add("BCH/USD");
-        add("XRP/USD");
-        add("EOS/USD");
-        add("LTC/USD");
-        add("DSH/USD");
-        add("NEO/USD");
-        add("ETC/USD");
-        add("ZEC/USD");
+//        add("BTC/USD");
+//        add("ETH/USD");
+//        add("BCH/USD");
+//        add("XRP/USD");
+//        add("EOS/USD");
+//        add("LTC/USD");
+//        add("DSH/USD");
+//        add("NEO/USD");
+//        add("ETC/USD");
+//        add("ZEC/USD");
         add("XRP/BTC");
         add("ETH/BTC");
         add("BCH/BTC");

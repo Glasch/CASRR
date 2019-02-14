@@ -48,10 +48,9 @@ public class Deal {
     private BigDecimal calcSpread() {
         BigDecimal value = ((bid.getPrice().subtract(ask.getPrice())).divide(ask.getPrice(),
                 4,
-                BigDecimal.ROUND_FLOOR).multiply(BigDecimal.valueOf(100)));
+                BigDecimal.ROUND_FLOOR)); //.multiply(BigDecimal.valueOf(100)));
         return value;
     }
-
     BigDecimal getEffectiveAmount() {
         return effectiveAmount;
     }
@@ -75,7 +74,7 @@ public class Deal {
     @Override
     public String toString() {
         return "Bid: " + bid + " Ask: " + ask + ". Effective Amount: " + effectiveAmount
-                + " Value in $: " + valueInDollars;
+                + " Spread: " + spread;
     }
 
     void setEffectiveAmount(BigDecimal effectiveAmount) {
@@ -101,4 +100,6 @@ public class Deal {
     BigDecimal getValueInDollars() {
         return valueInDollars;
     }
+
+
 }

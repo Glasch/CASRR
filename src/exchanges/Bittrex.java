@@ -19,16 +19,16 @@ public class Bittrex extends Exchange implements Runnable {
     private BigDecimal takerTax = BigDecimal.valueOf(0.0025);
     private Map <String, Pair> market = new HashMap <>();
     private List <String> pairs = new ArrayList <String>() {{
-        add("BTC/USD");
-        add("ETH/USD");
-        add("BCH/USD");
-        add("XRP/USD");
-        add("ZEC/USD");
-        add("ADA/USD");
-        add("LTC/USD");
-        add("TRX/USD");
-        add("ETC/USD");
-        add("USD/SC");
+//        add("BTC/USD");
+//        add("ETH/USD");
+//        add("BCH/USD");
+//        add("XRP/USD");
+//        add("ZEC/USD");
+//        add("ADA/USD");
+//        add("LTC/USD");
+//        add("TRX/USD");
+//        add("ETC/USD");
+//        add("USD/SC");
         add("XRP/BTC");
         add("ETH/BTC");
         add("BCH/BTC");

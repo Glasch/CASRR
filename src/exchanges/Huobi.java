@@ -15,17 +15,17 @@ public class Huobi extends Exchange implements Runnable {
     private BigDecimal takerTax = BigDecimal.valueOf(0.002);
     private Map<String, Pair> market = new HashMap<>();
     private ArrayList<String> pairs = new ArrayList<String>() {{
-        add("BTC/USDT");
-        add("ETH/USDT");
-        add("XRP/USDT");
-        add("LTC/USDT");
-        add("ETC/USDT");
-        add("EOS/USDT");
-        add("ADA/USDT");
-        add("DASH/USDT");
-        add("ZEC/USDT");
-        add("TRX/USDT");
-        add("OMG/USDT");
+//        add("BTC/USDT");
+//        add("ETH/USDT");
+//        add("XRP/USDT");
+//        add("LTC/USDT");
+//        add("ETC/USDT");
+//        add("EOS/USDT");
+//        add("ADA/USDT");
+//        add("DASH/USDT");
+//        add("ZEC/USDT");
+//        add("TRX/USDT");
+//        add("OMG/USDT");
         add("ETH/BTC");
         add("XRP/BTC");
         add("BCH/BTC");
