@@ -4,6 +4,7 @@ import exchanges.Exchange;
 import model.Order;
 import model.OrderType;
 import model.Pair;
+import model.Route;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.postgresql.util.PSQLException;
@@ -237,6 +238,22 @@ public class DBManager {
                 }
             }
         }
+    }
+
+    public void saveRoute(Connection connection,
+                          Route route,
+                          Map <Exchange, Integer> exchangeToId,
+                          Map <String, Integer> pairToId ) throws SQLException {
+        String sql = "INSERT INTO route VALUES (\n" +
+                "?,?,?,?,?\n" +
+                ")\n";
+        PreparedStatement statement = connection.prepareStatement(sql);
+        statement.setInt(1, exchangeToId.get(route.getExchangeFrom()));
+        statement.setInt(2, exchangeToId.get(route.getExchangeTo()));
+        statement.setInt(3, pairToId.get(route.getPairName()));
+        statement.setBigDecimal(4,route.getAmount());
+        statement.setBigDecimal(5,route.getSpread());
+        statement.executeUpdate();
     }
 }
 

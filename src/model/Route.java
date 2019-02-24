@@ -115,10 +115,12 @@ public class Route {
     }
 
     public void calcRouteSpread(List <Deal> deals) {
+        BigDecimal spread = BigDecimal.ZERO;
         if (deals.isEmpty()) return;
         for (Deal deal : deals) {
-            this.setSpread(this.getSpread().add(deal.getSpread().multiply(deal.getEffectiveAmount().divide(this.getAmount(), 5, BigDecimal.ROUND_HALF_DOWN))));
+             spread = spread.add(deal.getEffectiveAmount().divide(this.getAmount(),5,BigDecimal.ROUND_HALF_DOWN).multiply(deal.getSpread()));
         }
+        this.setSpread(spread);
     }
 
     public void addDealsForExchangesPair(Exchange from, Exchange to) {
@@ -133,7 +135,7 @@ public class Route {
         return deals;
     }
 
-    String getPairName() {
+    public String getPairName() {
         return pairName;
     }
 
@@ -209,4 +211,6 @@ public class Route {
     public List <Deal> getDeals() {
         return deals;
     }
+
+
 }

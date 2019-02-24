@@ -8,6 +8,7 @@ import services.Updater;
 import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.Timestamp;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
@@ -33,7 +34,11 @@ public class Main {
         System.out.println("OK!");
         Set <Timestamp> timestamps = dbManager.getTimestamps(connection);
         Map <Integer, Exchange> idToExchange = dbManager.getIdToExchange(updater, connection);
+        Map <Exchange, Integer> exchangeToId = reverseMap(idToExchange);
+
         Map <Integer, String> idToPair = dbManager.getIdToPair(updater, connection);
+        Map <String, Integer> pairToId = reverseMap(idToPair);
+
         System.out.println(timestamps.size());
         Map<String,BigDecimal> before = reporter.calcGlobalAccount(updater);
         DbAnalyzeReport dbAnalyzeReport = new DbAnalyzeReport();
@@ -49,6 +54,7 @@ public class Main {
             reporter.showAcceptedRoutes(trader,true);
             for (Route route : router.getResultingRoutes()) {
                 trader.makeDeal(route);
+                dbManager.saveRoute(connection, route, exchangeToId, pairToId );
             }
 //            reporter.showAcceptedRoutes(trader,true);
             Map<String,BigDecimal> after = reporter.calcGlobalAccount(updater);
@@ -57,7 +63,7 @@ public class Main {
             }
             reporter.showExchangeAccounts(true);
             dbAnalyzeReport.updatePossibleRoutesData(router);
-            reporter.showDbAnalyzeReport(dbAnalyzeReport,false);
+            reporter.showDbAnalyzeReport(dbAnalyzeReport,true);
             System.out.println("--------------GLOBAL---------------");
             reporter.printGlobalAccount(after);
             System.out.println(++count);
@@ -66,6 +72,15 @@ public class Main {
             }
         }
         connection.close();
+    }
+
+     static Map reverseMap(Map  map) {
+        Map  resMap = new HashMap <>();
+        for (Object newValue : map.keySet()) {
+            Object newKey = map.get(newValue);
+            resMap.put(newKey,newValue);
+        }
+        return resMap;
     }
 }
 
