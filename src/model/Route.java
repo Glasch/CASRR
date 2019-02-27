@@ -118,6 +118,7 @@ public class Route {
         BigDecimal spread = BigDecimal.ZERO;
         if (deals.isEmpty()) return;
         for (Deal deal : deals) {
+
              spread = spread.add(deal.getEffectiveAmount().divide(this.getAmount(),5,BigDecimal.ROUND_HALF_DOWN).multiply(deal.getSpread()));
         }
         this.setSpread(spread);
@@ -172,7 +173,7 @@ public class Route {
         return routeAmountInDollars;
     }
 
-    BigDecimal getTaxFrom() {
+    public BigDecimal getTaxFrom() {
         return taxFrom;
     }
 
@@ -180,7 +181,7 @@ public class Route {
         this.taxFrom = taxFrom;
     }
 
-    BigDecimal getTaxTo() {
+    public BigDecimal getTaxTo() {
         return taxTo;
     }
 

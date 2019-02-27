@@ -16,7 +16,7 @@ import java.util.Set;
  * Copyright (c) Anton on 17.11.2018.
  */
 public class Main {
-    private static String url = "jdbc:postgresql://185.246.153.215:5432/cas";
+    private static String url = "jdbc:postgresql://localhost:5432/cas";
     private static String login = "postgres";
     private static String password = "tMXVuD8JrJ8egE";
     private static int count = 0;
@@ -43,9 +43,9 @@ public class Main {
         Map<String,BigDecimal> before = reporter.calcGlobalAccount(updater);
         DbAnalyzeReport dbAnalyzeReport = new DbAnalyzeReport();
         dbAnalyzeReport.initPossibleRoutes(new Router(updater));
+        dbManager.saveStaticData();
         for (Timestamp timestamp : timestamps) {
             System.out.println("-----------------------------NEW TIMESTAMP---------------------------------");
-//         dbManager.saveStaticData();
 //          updater.update();
 //          dbManager.saveOrders();
             dbManager.getMarketsFromDB(timestamp, idToExchange, idToPair, connection);
@@ -54,7 +54,9 @@ public class Main {
             reporter.showAcceptedRoutes(trader,true);
             for (Route route : router.getResultingRoutes()) {
                 trader.makeDeal(route);
-                dbManager.saveRoute(connection, route, exchangeToId, pairToId );
+            }
+            for (Route acceptedRoute : trader.getAcceptedRoutes()) {
+                dbManager.saveRoute(connection, acceptedRoute, exchangeToId, pairToId );
             }
 //            reporter.showAcceptedRoutes(trader,true);
             Map<String,BigDecimal> after = reporter.calcGlobalAccount(updater);
@@ -63,7 +65,7 @@ public class Main {
             }
             reporter.showExchangeAccounts(true);
             dbAnalyzeReport.updatePossibleRoutesData(router);
-            reporter.showDbAnalyzeReport(dbAnalyzeReport,true);
+            reporter.showDbAnalyzeReport(dbAnalyzeReport,false);
             System.out.println("--------------GLOBAL---------------");
             reporter.printGlobalAccount(after);
             System.out.println(++count);

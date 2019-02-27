@@ -27,7 +27,8 @@ public class Trader {
         acceptTax(route);
 
         route.calcRouteSpread(route.getSortedEVDeals());
-        acceptedRoutes.add(route);
+        if (route.getAmount().compareTo(BigDecimal.ZERO) > 0){
+        acceptedRoutes.add(route);}
     }
 
     private void calcTax(Deal deal) {

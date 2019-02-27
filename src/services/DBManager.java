@@ -1,10 +1,7 @@
 package services;
 
 import exchanges.Exchange;
-import model.Order;
-import model.OrderType;
-import model.Pair;
-import model.Route;
+import model.*;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.postgresql.util.PSQLException;
@@ -58,10 +55,10 @@ public class DBManager {
 
     public void getMarketsFromDB(
             Timestamp timestamp,
-            Map <Integer, Exchange> idToExchange,
-            Map <Integer, String> idToPair,
+            Map<Integer, Exchange> idToExchange,
+            Map<Integer, String> idToPair,
             Connection connection) throws SQLException, ClassNotFoundException {
-        String sql = "select market, market.exchange_id, market.pair_id\n" +
+        String sql = "select \"order\".id, market, market.exchange_id, market.pair_id\n" +
                 "from public.\"order\"\n" +
                 "join market\n" +
                 "on market_id = market.id\n" +
@@ -69,37 +66,38 @@ public class DBManager {
         PreparedStatement statement = connection.prepareStatement(sql);
         ResultSet resultSet = statement.executeQuery();
         while (resultSet.next()) {
+            Integer id = resultSet.getInt("id");
             Exchange exchange = idToExchange.get(resultSet.getInt("exchange_id"));
             String pair = idToPair.get(resultSet.getInt("pair_id"));
             JSONObject marketJs = new JSONObject(resultSet.getString("market"));
-            savaDataToExchange(exchange, pair, marketJs);
+            saveDataToExchange(exchange, pair, marketJs, id);
         }
     }
 
 
-    private void savaDataToExchange(Exchange exchange, String pair, JSONObject marketJs) {
-        List <Order> bidsList = getOrderListFromJson(exchange, marketJs, OrderType.BID);
-        List <Order> asksList = getOrderListFromJson(exchange, marketJs, OrderType.ASK);
+    private void saveDataToExchange(Exchange exchange, String pair, JSONObject marketJs, Integer id) {
+        List<Order> bidsList = getOrderListFromJson(exchange, marketJs, OrderType.BID, id);
+        List<Order> asksList = getOrderListFromJson(exchange, marketJs, OrderType.ASK, id);
         Pair bigPair = new Pair();
         bigPair.setOrders(OrderType.BID, bidsList);
         bigPair.setOrders(OrderType.ASK, asksList);
         exchange.getMarket().put(pair, bigPair);
     }
 
-    private List <Order> getOrderListFromJson(Exchange exchange, JSONObject marketJs, OrderType type) {
-        List <Order> orders = new ArrayList <>();
+    private List<Order> getOrderListFromJson(Exchange exchange, JSONObject marketJs, OrderType type, Integer id) {
+        List<Order> orders = new ArrayList<>();
         JSONArray jsonArray = (JSONArray) marketJs.get(type.getJSONKey(type));
         for (int i = 0; i < jsonArray.length(); i++) {
             JSONArray bid = (JSONArray) jsonArray.get(i);
-            BigDecimal prize = new BigDecimal(bid.getDouble(0));
+            BigDecimal price = new BigDecimal(bid.getDouble(0));
             BigDecimal amount = new BigDecimal(bid.getDouble(1));
-            orders.add(new Order(exchange, prize, amount));
+            orders.add(new Order(exchange, price, amount, id));
         }
         return orders;
     }
 
-    public Set <Timestamp> getTimestamps(Connection connection) throws SQLException {
-        Set <Timestamp> timestamps = new HashSet <>();
+    public Set<Timestamp> getTimestamps(Connection connection) throws SQLException {
+        Set<Timestamp> timestamps = new HashSet<>();
         String sql = "select timestamp from public.\"order\" group by timestamp  order by timestamp ASC";
         PreparedStatement statement = connection.prepareStatement(sql);
         ResultSet resultSet = statement.executeQuery();
@@ -109,8 +107,8 @@ public class DBManager {
         return timestamps;
     }
 
-    public Map <Integer, Exchange> getIdToExchange(Updater updater, Connection connection) throws SQLException {
-        Map <Integer, Exchange> exchangeToId = new HashMap <>();
+    public Map<Integer, Exchange> getIdToExchange(Updater updater, Connection connection) throws SQLException {
+        Map<Integer, Exchange> exchangeToId = new HashMap<>();
         for (Exchange exchange : updater.getExchanges()) {
             ResultSet resultSet = getExchangeResultSet(connection, exchange);
             if (resultSet.next()) {
@@ -120,9 +118,9 @@ public class DBManager {
         return exchangeToId;
     }
 
-    public Map <Integer, String> getIdToPair(Updater updater, Connection connection) throws SQLException {
-        Map <Integer, String> pairToId = new HashMap <>();
-        Set <String> pairs = new HashSet <>();
+    public Map<Integer, String> getIdToPair(Updater updater, Connection connection) throws SQLException {
+        Map<Integer, String> pairToId = new HashMap<>();
+        Set<String> pairs = new HashSet<>();
         for (Exchange exchange : updater.getExchanges()) {
             pairs.addAll(exchange.getPairs());
         }
@@ -219,7 +217,7 @@ public class DBManager {
         return statement.executeQuery();
     }
 
-    private void saveExchangesAndPairs(List <Exchange> exchanges, Connection connection) throws Exception {
+    private void saveExchangesAndPairs(List<Exchange> exchanges, Connection connection) throws Exception {
         for (Exchange exchange : exchanges) {
             String sql = "INSERT INTO exchange (name) VALUES (?)";
             PreparedStatement statement1 = connection.prepareStatement(sql);
@@ -242,18 +240,47 @@ public class DBManager {
 
     public void saveRoute(Connection connection,
                           Route route,
-                          Map <Exchange, Integer> exchangeToId,
-                          Map <String, Integer> pairToId ) throws SQLException {
-        String sql = "INSERT INTO route VALUES (\n" +
-                "?,?,?,?,?\n" +
+                          Map<Exchange, Integer> exchangeToId,
+                          Map<String, Integer> pairToId) throws SQLException {
+        String sql = "INSERT INTO route (exchangeFrom_id,exchangeTo_id,pair_id,amount,spread,taxFrom,taxto) VALUES (\n" +
+                "?,?,?,?,?,?,?\n" +
                 ")\n";
-        PreparedStatement statement = connection.prepareStatement(sql);
+        PreparedStatement statement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
         statement.setInt(1, exchangeToId.get(route.getExchangeFrom()));
         statement.setInt(2, exchangeToId.get(route.getExchangeTo()));
         statement.setInt(3, pairToId.get(route.getPairName()));
-        statement.setBigDecimal(4,route.getAmount());
-        statement.setBigDecimal(5,route.getSpread());
+        statement.setBigDecimal(4, route.getAmount());
+        statement.setBigDecimal(5, route.getSpread());
+        statement.setBigDecimal(6, route.getTaxFrom());
+        statement.setBigDecimal(7, route.getTaxTo());
+
         statement.executeUpdate();
+
+        ResultSet keys = statement.getGeneratedKeys();
+        System.out.println();
+        System.out.println();
+        keys.next();
+        int key = keys.getInt(1);
+
+        for (Deal deal : route.getSortedEVDeals()) {
+            saveDeal(deal, connection,key);
+        }
+    }
+
+    private void saveDeal(Deal deal, Connection connection, int key) throws SQLException {
+        String sql = "INSERT INTO deal (route_id, amount, spread, order_from_id, order_to_id) VALUES (\n" +
+                "?,?,?,?,?\n" +
+                ")\n";
+        PreparedStatement statement = connection.prepareStatement(sql);
+        statement.setInt(1, key);
+        statement.setBigDecimal(2, deal.getEffectiveAmount());
+        statement.setBigDecimal(3, deal.getSpread());
+        statement.setInt(4, deal.getBid().getId());
+        statement.setInt(5, deal.getAsk().getId());
+        statement.executeUpdate();
+        System.out.println();
+
+
     }
 }
 

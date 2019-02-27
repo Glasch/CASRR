@@ -51,7 +51,7 @@ public class Deal {
                 BigDecimal.ROUND_FLOOR)); //.multiply(BigDecimal.valueOf(100)));
         return value;
     }
-    BigDecimal getEffectiveAmount() {
+   public BigDecimal getEffectiveAmount() {
         return effectiveAmount;
     }
 
@@ -59,7 +59,7 @@ public class Deal {
         return route;
     }
 
-    BigDecimal getSpread() {
+  public   BigDecimal getSpread() {
         return spread;
     }
 

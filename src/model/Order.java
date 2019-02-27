@@ -5,9 +5,7 @@ import exchanges.Exchange;
 import java.math.BigDecimal;
 
 public class Order {
-    private static int lastId = 1;
-
-    private int id = lastId++;
+    private Integer id;
     private Exchange exchange;
     private BigDecimal price;
     private BigDecimal amount;
@@ -20,6 +18,15 @@ public class Order {
         resetRemainingAmount();
     }
 
+    public Order(Exchange exchange, BigDecimal price, BigDecimal amount, Integer id) {
+        this.exchange = exchange;
+        this.price = price;
+        this.amount = amount;
+        this.id = id;
+        resetRemainingAmount();
+    }
+
+
     void resetRemainingAmount() {
         remainingAmount = amount;
     }
@@ -31,6 +38,9 @@ public class Order {
     public BigDecimal getAmount() {
         return amount;
     }
+
+    public  Integer getId(){return id;}
+
 
     BigDecimal getRemainingAmount() {
         return remainingAmount;
@@ -50,6 +60,8 @@ public class Order {
         Long percentUsed = Math.round(div.doubleValue()*100);
         return "O-"+id + " P: " + price + " A: " + amount + " U: " + percentUsed + "%";
     }
+
+
 
     public void setExchange(Exchange exchange) {
         this.exchange = exchange;

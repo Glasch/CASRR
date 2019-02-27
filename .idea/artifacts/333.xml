@@ -9,7 +9,6 @@
       <element id="library" level="project" name="org.apache.httpcomponents:httpclient:4.5.6" />
       <element id="library" level="project" name="org.apache.httpcomponents:httpcore:4.4.10" />
       <element id="library" level="project" name="org.json:json:20180813" />
-      <element id="library" level="project" name="postgresql:postgresql:9.1-901-1.jdbc4" />
       <element id="module-output" name="CASR" />
     </root>
   </artifact>
