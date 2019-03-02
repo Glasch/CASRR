@@ -8,6 +8,10 @@ import services.Updater;
 import java.math.BigDecimal;
 import java.sql.Connection;
 import java.sql.Timestamp;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
@@ -40,32 +44,33 @@ public class Main {
         Map <String, Integer> pairToId = reverseMap(idToPair);
 
         System.out.println(timestamps.size());
-        Map<String,BigDecimal> before = reporter.calcGlobalAccount(updater);
+        Map <String, BigDecimal> before = reporter.calcGlobalAccount(updater);
         DbAnalyzeReport dbAnalyzeReport = new DbAnalyzeReport();
         dbAnalyzeReport.initPossibleRoutes(new Router(updater));
         dbManager.saveStaticData();
         for (Timestamp timestamp : timestamps) {
+            System.out.println(timestamp);
             System.out.println("-----------------------------NEW TIMESTAMP---------------------------------");
 //          updater.update();
 //          dbManager.saveOrders();
             dbManager.getMarketsFromDB(timestamp, idToExchange, idToPair, connection);
             Router router = new Router(updater);
             Trader trader = new Trader();
-            reporter.showAcceptedRoutes(trader,true);
+            reporter.showAcceptedRoutes(trader, true);
             for (Route route : router.getResultingRoutes()) {
                 trader.makeDeal(route);
             }
             for (Route acceptedRoute : trader.getAcceptedRoutes()) {
-                dbManager.saveRoute(connection, acceptedRoute, exchangeToId, pairToId );
+                dbManager.saveRoute(connection, acceptedRoute, exchangeToId, pairToId);
             }
 //            reporter.showAcceptedRoutes(trader,true);
-            Map<String,BigDecimal> after = reporter.calcGlobalAccount(updater);
+            Map <String, BigDecimal> after = reporter.calcGlobalAccount(updater);
             for (String currency : after.keySet()) {
-                after.merge(currency,before.get(currency),BigDecimal::subtract);
+                after.merge(currency, before.get(currency), BigDecimal::subtract);
             }
             reporter.showExchangeAccounts(true);
             dbAnalyzeReport.updatePossibleRoutesData(router);
-            reporter.showDbAnalyzeReport(dbAnalyzeReport,false);
+            reporter.showDbAnalyzeReport(dbAnalyzeReport, false);
             System.out.println("--------------GLOBAL---------------");
             reporter.printGlobalAccount(after);
             System.out.println(++count);
@@ -73,16 +78,32 @@ public class Main {
                 exchange.getMarket().clear();
             }
         }
+
         connection.close();
     }
 
-     static Map reverseMap(Map  map) {
-        Map  resMap = new HashMap <>();
+  public static Map reverseMap(Map map) {
+        Map resMap = new HashMap <>();
         for (Object newValue : map.keySet()) {
             Object newKey = map.get(newValue);
-            resMap.put(newKey,newValue);
+            resMap.put(newKey, newValue);
         }
         return resMap;
     }
+
+   public static boolean isTimestampInRange(Timestamp current, String dateToCompareWith, boolean isFrom) throws ParseException {
+        DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+        Date date = dateFormat.parse(dateToCompareWith);
+        long time = date.getTime();
+        Timestamp timestampToCompareWith = new Timestamp(time);
+        if (isFrom) return current.after(timestampToCompareWith);
+        else return current.before(timestampToCompareWith);
+    }
+
+  public   static boolean isTimestampInRange(Timestamp current, String from, String to) throws ParseException {
+        return (isTimestampInRange(current, from, true) && (isTimestampInRange(current, to, false)));
+    }
+
+
 }
 

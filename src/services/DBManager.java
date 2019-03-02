@@ -4,11 +4,12 @@ import exchanges.Exchange;
 import model.*;
 import org.json.JSONArray;
 import org.json.JSONObject;
-import org.postgresql.util.PSQLException;
 
 import java.math.BigDecimal;
 import java.sql.*;
 import java.util.*;
+
+//import org.postgresql.util;
 
 /**
  * Copyright (c) Anton on 03.12.2018.
@@ -179,7 +180,7 @@ public class DBManager {
                             statement.setInt(1, exchangeID);
                             statement.setInt(2, pairID);
                             statement.executeUpdate();
-                        } catch (PSQLException ignored) {
+                        } catch (SQLException ignored) {
                         }
                     }
                 }
@@ -224,7 +225,7 @@ public class DBManager {
             try {
                 statement1.setString(1, exchange.getClass().getSimpleName());
                 statement1.executeUpdate();
-            } catch (PSQLException ignored) {
+            } catch (SQLException ignored) {
             }
             for (String pair : exchange.getPairs()) {
                 sql = "INSERT INTO pair (name) VALUES (?)";
@@ -232,7 +233,7 @@ public class DBManager {
                 try {
                     statement2.setString(1, pair);
                     statement2.executeUpdate();
-                } catch (PSQLException ignored) {
+                } catch (SQLException ignored) {
                 }
             }
         }
