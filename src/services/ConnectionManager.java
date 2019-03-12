@@ -68,11 +68,11 @@ public class ConnectionManager {
         request.addHeader("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36" +
                 " (KHTML, like Gecko) Chrome/28.0.1500.29 Safari/537.36");
         HttpResponse response;
-        JSONArray jsonObject;
+        JSONArray jsonArray;
         try {
             response = client.execute(request);
             HttpEntity entity = response.getEntity();
-            jsonObject = new JSONArray(EntityUtils.toString(entity));
+            jsonArray = new JSONArray(EntityUtils.toString(entity));
             StatusLine statusLine = response.getStatusLine();
             if (statusLine.getStatusCode() != 200) {
                 System.out.println("Bad response: " + statusLine.getStatusCode() + " " + statusLine.getReasonPhrase());
@@ -84,7 +84,7 @@ public class ConnectionManager {
             System.out.println("Request: " + requestString);
             return null;
         }
-        return jsonObject;
+        return jsonArray;
     }
 
 

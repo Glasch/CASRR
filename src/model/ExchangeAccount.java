@@ -1,6 +1,8 @@
 package model;
 
 import exchanges.Exchange;
+import org.json.JSONArray;
+import services.ConnectionManager;
 
 import java.math.BigDecimal;
 import java.util.*;
@@ -32,4 +34,6 @@ public class ExchangeAccount {
     public Map <String, BigDecimal> getBalances() {
         return balances;
     }
+
+
 }

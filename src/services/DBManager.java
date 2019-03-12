@@ -16,9 +16,9 @@ import java.util.*;
  */
 public class DBManager {
     private Updater updater;
-    private String url = "jdbc:postgresql://185.246.153.215:5432/cas";
+    private String url = "jdbc:postgresql://localhost:5432/postgres";
     private String login = "postgres";
-    private String password = "tMXVuD8JrJ8egE";
+    private String password = "N6d3bhjhYG7C";
 
     public DBManager(Updater updater) {
         this.updater = updater;
@@ -97,8 +97,8 @@ public class DBManager {
         return orders;
     }
 
-    public Set<Timestamp> getTimestamps(Connection connection) throws SQLException {
-        Set<Timestamp> timestamps = new HashSet<>();
+    public ArrayList<Timestamp> getTimestamps(Connection connection) throws SQLException {
+        ArrayList<Timestamp> timestamps = new ArrayList<>();
         String sql = "select timestamp from public.\"order\" group by timestamp  order by timestamp ASC";
         PreparedStatement statement = connection.prepareStatement(sql);
         ResultSet resultSet = statement.executeQuery();

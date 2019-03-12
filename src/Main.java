@@ -11,18 +11,15 @@ import java.sql.Timestamp;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Copyright (c) Anton on 17.11.2018.
  */
 public class Main {
-    private static String url = "jdbc:postgresql://localhost:5432/cas";
+    private static String url = "jdbc:postgresql://localhost:5432/postgres";
     private static String login = "postgres";
-    private static String password = "tMXVuD8JrJ8egE";
+    private static String password = "N6d3bhjhYG7C";
     private static int count = 0;
 
     public static void main(String[] args) throws Exception {
@@ -36,7 +33,7 @@ public class Main {
         System.out.println("Создаем Коннекшен!");
         Connection connection = ConnectionManager.getDBconnection(url, login, password);
         System.out.println("OK!");
-        Set <Timestamp> timestamps = dbManager.getTimestamps(connection);
+        ArrayList<Timestamp> timestamps = dbManager.getTimestamps(connection);
         Map <Integer, Exchange> idToExchange = dbManager.getIdToExchange(updater, connection);
         Map <Exchange, Integer> exchangeToId = reverseMap(idToExchange);
 
@@ -48,7 +45,13 @@ public class Main {
         DbAnalyzeReport dbAnalyzeReport = new DbAnalyzeReport();
         dbAnalyzeReport.initPossibleRoutes(new Router(updater));
         dbManager.saveStaticData();
+        Timestamp lastTm=null;
         for (Timestamp timestamp : timestamps) {
+
+            lastTm = timestamp;
+            if (isTimestampInRange(timestamp, "2019-02-27 13:22:43", true))
+                continue;
+
             System.out.println(timestamp);
             System.out.println("-----------------------------NEW TIMESTAMP---------------------------------");
 //          updater.update();
@@ -78,7 +81,7 @@ public class Main {
                 exchange.getMarket().clear();
             }
         }
-
+        System.out.println(lastTm);
         connection.close();
     }
 
@@ -92,12 +95,14 @@ public class Main {
     }
 
    public static boolean isTimestampInRange(Timestamp current, String dateToCompareWith, boolean isFrom) throws ParseException {
-        DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+        DateFormat dateFormat = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
         Date date = dateFormat.parse(dateToCompareWith);
         long time = date.getTime();
         Timestamp timestampToCompareWith = new Timestamp(time);
-        if (isFrom) return current.after(timestampToCompareWith);
-        else return current.before(timestampToCompareWith);
+        //if (isFrom)
+
+            return current.after(timestampToCompareWith);
+       // else return current.before(timestampToCompareWith);
     }
 
   public   static boolean isTimestampInRange(Timestamp current, String from, String to) throws ParseException {

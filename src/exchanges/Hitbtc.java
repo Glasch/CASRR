@@ -3,7 +3,10 @@ package exchanges;
 import model.Order;
 import model.OrderType;
 import model.Pair;
+import org.apache.http.auth.AuthenticationException;
+import org.json.JSONArray;
 import org.json.JSONObject;
+import services.ConnectionManager;
 
 import java.math.BigDecimal;
 import java.util.*;
@@ -81,6 +84,20 @@ public class Hitbtc extends Exchange implements Runnable {
         }
 
         return orders;
+    }
+
+    public static BigDecimal getCurrencyBalance(String currency) throws AuthenticationException {
+        JSONArray jsonArray = ConnectionManager.getHitBtcBalanceJsonArray("https://api.hitbtc.com/api/2/trading/balance",
+                "3f6ffb7a7095445a498c52f66d5192b2",
+                "110e4b1bd2426cf05039c6db53c265ab");
+        for (Object currencyInfo : jsonArray) {
+            if (currencyInfo instanceof JSONObject){
+                if (((JSONObject) currencyInfo).get("currency").equals(currency)){
+                    return  new BigDecimal (((JSONObject)currencyInfo).getString("available"));
+                }
+            }
+        }
+        throw new IllegalStateException("unexpected error getting HitBTC data");
     }
 
     @Override

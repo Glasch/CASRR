@@ -2,7 +2,6 @@
   <artifact type="jar" name="222">
     <output-path>$PROJECT_DIR$/out/artifacts/222</output-path>
     <root id="archive" name="222.jar">
-      <element id="library" level="project" name="com.microsoft.sqlserver:mssql-jdbc:7.1.2.jre11-preview" />
       <element id="library" level="project" name="org.apache.httpcomponents:httpclient:4.5.6" />
       <element id="library" level="project" name="org.apache.httpcomponents:httpcore:4.4.10" />
       <element id="library" level="project" name="org.json:json:20180813" />
