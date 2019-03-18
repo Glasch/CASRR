@@ -100,6 +100,8 @@ public class Hitbtc extends Exchange implements Runnable {
         throw new IllegalStateException("unexpected error getting HitBTC data");
     }
 
+
+
     @Override
     protected String casting(String pair) {
         String res;

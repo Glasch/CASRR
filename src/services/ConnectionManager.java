@@ -1,5 +1,8 @@
 package services;
 
+import org.apache.commons.codec.DecoderException;
+import org.apache.commons.codec.binary.Hex;
+import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.StatusLine;
@@ -8,14 +11,25 @@ import org.apache.http.auth.AuthenticationException;
 import org.apache.http.auth.UsernamePasswordCredentials;
 import org.apache.http.client.CredentialsProvider;
 import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.ByteArrayEntity;
+import org.apache.http.entity.ContentType;
 import org.apache.http.impl.client.BasicCredentialsProvider;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import javax.crypto.Mac;
+import javax.crypto.spec.SecretKeySpec;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -58,8 +72,31 @@ public class ConnectionManager {
         return jsonObject;
     }
 
-    public static JSONArray getHitBtcBalanceJsonArray(String requestString, String login, String password) throws AuthenticationException {
+    public static JSONObject readJSONFromSignedPostRequest(String url, String data, String key, String secretKey) throws DecoderException {
+        String dataFromServer = "";
 
+        String signedData = calculateHMAC(data, secretKey);
+        try {
+            CloseableHttpClient client = HttpClients.createDefault();
+            HttpPost httpPost = new HttpPost(url);
+
+            httpPost.addHeader("Key", key);
+            httpPost.addHeader("Sign", signedData);
+
+            httpPost.setEntity(new ByteArrayEntity(data.getBytes(), ContentType.APPLICATION_FORM_URLENCODED));
+
+            CloseableHttpResponse response = client.execute(httpPost);
+            HttpEntity entity = response.getEntity();
+            if (entity != null) {
+               dataFromServer = IOUtils.toString(entity.getContent(), StandardCharsets.UTF_8);
+            } else System.out.println("Error");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return new JSONObject(dataFromServer);
+
+    }
+    public static JSONArray getHitBtcBalanceJsonArray(String requestString, String login, String password) throws AuthenticationException {
         Logger.getLogger("org.apache").setLevel(Level.OFF);
         CredentialsProvider credentialsProvider = new BasicCredentialsProvider();
         credentialsProvider.setCredentials(AuthScope.ANY,new UsernamePasswordCredentials(login, password));
@@ -87,6 +124,51 @@ public class ConnectionManager {
         return jsonArray;
     }
 
+    public static JSONObject getHitBtcPostJsonArray(String requestString, String data, String login, String password) throws AuthenticationException {
+        Logger.getLogger("org.apache").setLevel(Level.OFF);
+        CredentialsProvider credentialsProvider = new BasicCredentialsProvider();
+        credentialsProvider.setCredentials(AuthScope.ANY,new UsernamePasswordCredentials(login, password));
+        CloseableHttpClient client = HttpClientBuilder.create().setDefaultCredentialsProvider(credentialsProvider).build();
+        HttpPost request = new HttpPost(requestString);
+        request.addHeader("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36" +
+                " (KHTML, like Gecko) Chrome/28.0.1500.29 Safari/537.36");
+
+        request.setEntity(new ByteArrayEntity(data.getBytes(), ContentType.APPLICATION_FORM_URLENCODED));
+
+        HttpResponse response;
+        JSONObject jsonArray;
+        try {
+            response = client.execute(request);
+            HttpEntity entity = response.getEntity();
+            jsonArray = new JSONObject(EntityUtils.toString(entity));
+            StatusLine statusLine = response.getStatusLine();
+            if (statusLine.getStatusCode() != 200) {
+                System.out.println("Bad response: " + statusLine.getStatusCode() + " " + statusLine.getReasonPhrase());
+                System.out.println("Request: " + requestString);
+                return null;
+            }
+        } catch (Exception e) {
+            System.out.println("Could not get response: " + e.getMessage());
+            System.out.println("Request: " + requestString);
+            return null;
+        }
+        return jsonArray;
+    }
+
+    private static String calculateHMAC(String data, String key) throws DecoderException {
+        SecretKeySpec secretKeySpec = new SecretKeySpec(key.getBytes(), "HMACSHA512");
+        Mac mac = null;
+        try {
+            mac = Mac.getInstance("HMACSHA512");
+            mac.init(secretKeySpec);
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        } catch (InvalidKeyException e) {
+            e.printStackTrace();
+        }
+        byte[] hmac = mac.doFinal(data.getBytes());
+        return Hex.encodeHexString(hmac);
+    }
 
     public static Connection getDBconnection(String url, String login, String password) throws SQLException, ClassNotFoundException {
         //Class.forName("org.postgresql.Driver");

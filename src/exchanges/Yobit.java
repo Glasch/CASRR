@@ -3,10 +3,13 @@ package exchanges;
 import model.Order;
 import model.OrderType;
 import model.Pair;
+import org.apache.commons.codec.DecoderException;
 import org.json.JSONObject;
+import services.ConnectionManager;
 
 import java.math.BigDecimal;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Copyright (c) Anton on 17.10.2018.
@@ -14,6 +17,9 @@ import java.util.*;
 public class Yobit extends Exchange implements Runnable {
     private BigDecimal takerTax = BigDecimal.valueOf(0.002);
     private HashMap<String, Pair> market = new HashMap<>();
+    private static final String apiPrivateUrl = "https://yobit.net/tapi/";
+    private static final String key = "F52E287BF91CE5BE8C45475EAB0E1A6C";
+    private static final String secretKey = "8400d2f9bf7fc1e77b266e110fde65bd";
     private ArrayList<String> pairs = new ArrayList<String>() {{
         add("ETH/BTC");
         add("DASH/BTC");
@@ -79,4 +85,10 @@ public class Yobit extends Exchange implements Runnable {
     public BigDecimal getTakerTax() {
         return takerTax;
     }
+
+   public  static BigDecimal getBalance(String currency) throws DecoderException {
+       JSONObject jsonObject = ConnectionManager.readJSONFromSignedPostRequest(apiPrivateUrl,
+               "method=getInfo&nonce=" + String.valueOf(System.currentTimeMillis()).substring(6), key, secretKey);
+       return jsonObject.getJSONObject("return").getJSONObject("funds").getBigDecimal(currency.toLowerCase());
+   }
 }
