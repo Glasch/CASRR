@@ -1,4 +1,4 @@
-package model;
+package services.apiManagers;
 
 import exchanges.Yobit;
 import junit.framework.TestCase;
@@ -6,26 +6,27 @@ import org.apache.commons.codec.DecoderException;
 import org.json.JSONObject;
 import services.ConnectionManager;
 
+import java.math.BigDecimal;
 import java.time.Instant;
 
-public class CreateOrderYobitUTest extends TestCase {
+/**
+ * Copyright (c) Anton on 20.03.2019.
+ */
+public class YobitPrivateApiManagerUTest extends TestCase {
 
-    public void testGetBalance() throws DecoderException {
-        JSONObject jsonObject = ConnectionManager.readJSONFromSignedPostRequest(Yobit.getApiPrivateUrl(),
-                 "method=getInfo&nonce=" + Instant.now().getEpochSecond(), Yobit.getKey(), Yobit.getSecretKey());
-        System.out.println(jsonObject.getJSONObject("return").getJSONObject("funds").getBigDecimal("eth"));
+    public void testGetCurrencyBalance() throws DecoderException {
+        System.out.println(YobitPrivateApiManager.getCurrencyBalance("USD"));
+        assertEquals(BigDecimal.ZERO,YobitPrivateApiManager.getCurrencyBalance("eth"));
     }
 
     public void testCreateYobitOrder() throws DecoderException, InterruptedException {
         long millis = Instant.now().getEpochSecond();
-
         JSONObject json = ConnectionManager.readJSONFromSignedPostRequest(
                 Yobit.getApiPrivateUrl(),
                 "method=Trade&pair=btc_usd&type=buy&rate=3500amount=0.001&nonce=" + millis, // &rate=3500
                 Yobit.getKey(),
                 Yobit.getSecretKey());
         System.out.println(json);
-
     }
 
     public void testGetActiveOrders() throws DecoderException {
@@ -68,6 +69,8 @@ public class CreateOrderYobitUTest extends TestCase {
         System.out.println(json);
     }
 
-
+    public void testCheckNullParam() {
+        assertEquals("", YobitPrivateApiManager.checkNullParam(null));
+        assertEquals(100, YobitPrivateApiManager.checkNullParam(100));
+    }
 }
-

@@ -28,7 +28,7 @@ public class UsdConverter {
 
     void loadData() {
         for (String currencyName : currencyIds.keySet()) {
-            JSONObject coinListings = ConnectionManager.readJSONFromRequest("https://api.coinmarketcap.com/v2/ticker/" +
+            JSONObject coinListings = ConnectionManager.readJSONFromGetRequest("https://api.coinmarketcap.com/v2/ticker/" +
                 currencyIds.get(currencyName));
             if (coinListings == null) {
                 System.out.println(getClass().getName() + ": unable to get coin listings for " + currencyName + " to dollar");

@@ -52,7 +52,7 @@ public abstract class Exchange implements Runnable {
     private void updateMarketData() {
         for (String pairName : getPairs()) {
             String request = buildAPIRequest(pairName);
-            JSONObject json = ConnectionManager.readJSONFromRequest(request);
+            JSONObject json = ConnectionManager.readJSONFromGetRequest(request);
             if(json != null) {
                 Pair pair = createPair(pairName, json, request);
                 getMarket().put(pair.getPairName(), pair);
