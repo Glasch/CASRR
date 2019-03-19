@@ -20,7 +20,7 @@ public class YobitPrivateApiManagerUTest extends TestCase {
     }
 
     public void testCreateYobitOrder() throws DecoderException, InterruptedException {
-        YobitPrivateApiManager.createYobitOrder("eth_btc", YobitPrivateApiManager.DealType.SELL, BigDecimal.valueOf(1000), BigDecimal.TEN );
+        System.out.println(YobitPrivateApiManager.createYobitOrder("btc_usd", YobitPrivateApiManager.DealType.BUY, BigDecimal.valueOf(3500), BigDecimal.valueOf(0.001) )); // TODO: 20.03.2019 {"success":0,"error":"Total transaction amount is less than minimal total: 0.10000000"} what is that? Yesterday it works.
     }
 
     public void testGetActiveOrders() throws DecoderException {
