@@ -8,6 +8,7 @@ import org.json.JSONObject;
 import services.ConnectionManager;
 
 import java.math.BigDecimal;
+import java.time.Instant;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
@@ -18,8 +19,9 @@ public class Yobit extends Exchange implements Runnable {
     private BigDecimal takerTax = BigDecimal.valueOf(0.002);
     private HashMap<String, Pair> market = new HashMap<>();
     private static final String apiPrivateUrl = "https://yobit.net/tapi/";
-    private static final String key = "F52E287BF91CE5BE8C45475EAB0E1A6C";
-    private static final String secretKey = "8400d2f9bf7fc1e77b266e110fde65bd";
+    private static final String key = "AD91AFB586B64A795497FF442197C9BE";
+    private static final String secretKey = "5b33ca1263910cdc74d471cf87cc87af";
+
     private ArrayList<String> pairs = new ArrayList<String>() {{
         add("ETH/BTC");
         add("DASH/BTC");
@@ -88,7 +90,19 @@ public class Yobit extends Exchange implements Runnable {
 
    public  static BigDecimal getBalance(String currency) throws DecoderException {
        JSONObject jsonObject = ConnectionManager.readJSONFromSignedPostRequest(apiPrivateUrl,
-               "method=getInfo&nonce=" + String.valueOf(System.currentTimeMillis()).substring(6), key, secretKey);
+               "method=getInfo&nonce=" + Instant.now().getEpochSecond(), key, secretKey);
        return jsonObject.getJSONObject("return").getJSONObject("funds").getBigDecimal(currency.toLowerCase());
    }
+
+    public static String getApiPrivateUrl() {
+        return apiPrivateUrl;
+    }
+
+    public static String getKey() {
+        return key;
+    }
+
+    public static String getSecretKey() {
+        return secretKey;
+    }
 }
