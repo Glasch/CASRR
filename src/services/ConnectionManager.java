@@ -106,42 +106,6 @@ public class ConnectionManager {
         return new JSONObject(dataFromServer);
     }
 
-    public static JSONObject readTradeJSONFromSignedPostRequest(String url, String data, String key, String secretKey) throws DecoderException, URISyntaxException {
-        String dataFromServer = "";
-        ArrayList<NameValuePair> postParameters;
-        String signedData = calculateHMAC(data, secretKey);
-        try {
-            CloseableHttpClient client = HttpClients.createDefault();
-            HttpPost httpPost = new HttpPost(url);
-            httpPost.addHeader("Key", key);
-            httpPost.addHeader("Sign", signedData);
-
-//            postParameters = new ArrayList<>();
-//            postParameters.add(new BasicNameValuePair("pair", "usd_btc"));
-//            postParameters.add(new BasicNameValuePair("type", "sell"));
-//            postParameters.add(new BasicNameValuePair("rate", "0.002"));
-//            postParameters.add(new BasicNameValuePair("amount", "1"));
-//            postParameters.add(new BasicNameValuePair("method", "Trade"));
-//            postParameters.add(new BasicNameValuePair("nonce", String.valueOf(Instant.now().getEpochSecond())));
-
-          httpPost.setEntity(new ByteArrayEntity(data.getBytes(), ContentType.APPLICATION_FORM_URLENCODED));
-          //; todo Если так, то он логинится, но error = "invalid Pair"
-//            httpPost.setEntity(new UrlEncodedFormEntity(postParameters)); // todo А если так, то он не логиниться, но судя по всям гайдам должен отправить нормальный пост запрос на сервак
-            // TODO: 18.03.2019 И я короч хз как объединить это все в одну историю.
-
-            CloseableHttpResponse response = client.execute(httpPost);
-            HttpEntity entity = response.getEntity();
-            if (entity != null) {
-                dataFromServer = IOUtils.toString(entity.getContent(), StandardCharsets.UTF_8);
-            } else throw new NullPointerException("entity = null!");
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return new JSONObject(dataFromServer);
-    }
-
-
-
     public static JSONArray getHitBtcBalanceJsonArray(String requestString, String login, String password) throws AuthenticationException {
         Logger.getLogger("org.apache").setLevel(Level.OFF);
         CredentialsProvider credentialsProvider = new BasicCredentialsProvider();

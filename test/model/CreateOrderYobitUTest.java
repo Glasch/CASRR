@@ -10,6 +10,12 @@ import java.time.Instant;
 
 public class CreateOrderYobitUTest extends TestCase {
 
+    public void testGetBalance() throws DecoderException {
+        JSONObject jsonObject = ConnectionManager.readJSONFromSignedPostRequest(Yobit.getApiPrivateUrl(),
+                 "method=getInfo&nonce=" + Instant.now().getEpochSecond(), Yobit.getKey(), Yobit.getSecretKey());
+        System.out.println(jsonObject.getJSONObject("return").getJSONObject("funds").getBigDecimal("eth"));
+    }
+
     public void testCreateYobitOrder() throws DecoderException, InterruptedException {
         long millis = Instant.now().getEpochSecond();
 

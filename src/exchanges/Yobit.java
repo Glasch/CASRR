@@ -88,11 +88,6 @@ public class Yobit extends Exchange implements Runnable {
         return takerTax;
     }
 
-   public  static BigDecimal getBalance(String currency) throws DecoderException {
-       JSONObject jsonObject = ConnectionManager.readJSONFromSignedPostRequest(apiPrivateUrl,
-               "method=getInfo&nonce=" + Instant.now().getEpochSecond(), key, secretKey);
-       return jsonObject.getJSONObject("return").getJSONObject("funds").getBigDecimal(currency.toLowerCase());
-   }
 
     public static String getApiPrivateUrl() {
         return apiPrivateUrl;
