@@ -20,13 +20,7 @@ public class YobitPrivateApiManagerUTest extends TestCase {
     }
 
     public void testCreateYobitOrder() throws DecoderException, InterruptedException {
-        long millis = Instant.now().getEpochSecond();
-        JSONObject json = ConnectionManager.readJSONFromSignedPostRequest(
-                Yobit.getApiPrivateUrl(),
-                "method=Trade&pair=btc_usd&type=buy&rate=3500amount=0.001&nonce=" + millis, // &rate=3500
-                Yobit.getKey(),
-                Yobit.getSecretKey());
-        System.out.println(json);
+        YobitPrivateApiManager.createYobitOrder("eth_btc", YobitPrivateApiManager.DealType.SELL, BigDecimal.valueOf(1000), BigDecimal.TEN );
     }
 
     public void testGetActiveOrders() throws DecoderException {

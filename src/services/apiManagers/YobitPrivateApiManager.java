@@ -10,6 +10,7 @@ import java.math.BigDecimal;
 import java.time.Instant;
 
 public class YobitPrivateApiManager {
+
     public static BigDecimal getCurrencyBalance(String currency) throws DecoderException {
         JSONObject jsonObject = ConnectionManager.readJSONFromSignedPostRequest(Yobit.getApiPrivateUrl(),
                 "method=getInfo&nonce=" + Instant.now().getEpochSecond(), Yobit.getKey(), Yobit.getSecretKey());
@@ -22,7 +23,7 @@ public class YobitPrivateApiManager {
         return balance;
     }
 
-    public JSONObject testCreateYobitOrder(String pair, DealType dealType, BigDecimal rate, BigDecimal amount ) throws DecoderException, InterruptedException {
+    public static JSONObject createYobitOrder(String pair, DealType dealType, BigDecimal rate, BigDecimal amount) throws DecoderException, InterruptedException {
         long millis = Instant.now().getEpochSecond();
         JSONObject json = ConnectionManager.readJSONFromSignedPostRequest(
                 Yobit.getApiPrivateUrl(),
@@ -39,7 +40,7 @@ public class YobitPrivateApiManager {
         else return object;
     }
 
-    private enum DealType{
+    public enum DealType{
         BUY, SELL;
 
         @Override
