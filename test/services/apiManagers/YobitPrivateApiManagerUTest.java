@@ -20,7 +20,7 @@ public class YobitPrivateApiManagerUTest extends TestCase {
     }
 
     public void testCreateYobitOrder() throws DecoderException, InterruptedException {
-        System.out.println(YobitPrivateApiManager.createYobitOrder("btc_usd", YobitPrivateApiManager.DealType.BUY, BigDecimal.valueOf(3500), BigDecimal.valueOf(0.001) )); // TODO: 20.03.2019 {"success":0,"error":"Total transaction amount is less than minimal total: 0.10000000"} what is that? Yesterday it works.
+        System.out.println(YobitPrivateApiManager.createYobitOrder("btc_usd", YobitPrivateApiManager.DealType.BUY, BigDecimal.valueOf(3500), BigDecimal.valueOf(0.001) )); // TODO: 20.03.2019 {"success":0,"error":"Total transaction amount is less than minimal total: 0.10000000"} what is that? Yesterday it works!
     }
 
     public void testGetActiveOrders() throws DecoderException {
