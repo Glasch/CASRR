@@ -3,6 +3,7 @@ package exchanges;
 import model.Order;
 import model.OrderType;
 import model.Pair;
+import model.Tradable;
 import org.apache.commons.codec.DecoderException;
 import org.json.JSONObject;
 import services.ConnectionManager;
@@ -74,6 +75,46 @@ public class Yobit extends Exchange implements Runnable {
         return res.toLowerCase();
     }
 
+//    @Override
+//    public BigDecimal getBalance(String currency) {
+//
+//        String data = "method=ActiveOrders&pair=btc_usd&nonce=\" + millis";
+//
+//        String signedData = calculateHMAC(data, secretKey);
+//        JSONObject httpResponse = ConnectionManager.sendPostRequest();
+//        return null;
+//    }
+
+//    @Override
+//    public void createOrder(String side, String type, String pair, BigDecimal quantity, BigDecimal price) {
+//
+//    }
+//
+//    @Override
+//    public void cancelAllOrders(String pair) {
+//
+//    }
+//
+//    @Override
+//    public void cancelAllOrders() {
+//
+//    }
+//
+//    @Override
+//    public void cancelOrder(String id) {
+//
+//    }
+//
+//    @Override
+//    public void getActiveOrders(String pair) {
+//
+//    }
+//
+//    @Override
+//    public void getActiveOrders() {
+//
+//    }
+
     @Override
     public Map <String, Pair> getMarket() {
         return market;
@@ -100,4 +141,6 @@ public class Yobit extends Exchange implements Runnable {
     public static String getSecretKey() {
         return secretKey;
     }
+
+
 }

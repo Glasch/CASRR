@@ -1,6 +1,9 @@
 import exchanges.Binance;
 import exchanges.Exchange;
 import junit.framework.TestCase;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.methods.HttpRequestBase;
+import org.junit.Test;
 
 import java.sql.Timestamp;
 import java.text.DateFormat;
@@ -48,6 +51,13 @@ public class MainTest extends TestCase {
         assertEquals(true,  Main.isTimestampInRange(second, "25/09/2007",false));
         assertEquals(true, Main.isTimestampInRange(second,"23/09/2007", "25/09/2007") );
 
+
+    }
+
+    public  void testMyTest() {
+        HttpRequestBase http = null;
+        http = new HttpPost();
+        System.out.println(http.getClass());
 
     }
 }

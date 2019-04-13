@@ -1,9 +1,6 @@
 package exchanges;
 
-import model.ExchangeAccount;
-import model.Order;
-import model.OrderType;
-import model.Pair;
+import model.*;
 import org.json.JSONObject;
 import services.ConnectionManager;
 
@@ -52,7 +49,7 @@ public abstract class Exchange implements Runnable {
     private void updateMarketData() {
         for (String pairName : getPairs()) {
             String request = buildAPIRequest(pairName);
-            JSONObject json = ConnectionManager.readJSONFromGetRequest(request);
+            JSONObject json = ConnectionManager.getRequest(request, null);
             if(json != null) {
                 Pair pair = createPair(pairName, json, request);
                 getMarket().put(pair.getPairName(), pair);
@@ -96,7 +93,7 @@ public abstract class Exchange implements Runnable {
 
     public BigDecimal getTakerTax() { return takerTax; }
 
-    @Override
+       @Override
     public String toString() {
         return this.getClass().getSimpleName();
     }

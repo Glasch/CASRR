@@ -3,6 +3,7 @@ package exchanges;
 import model.Order;
 import model.OrderType;
 import model.Pair;
+import model.Tradable;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -45,7 +46,7 @@ public class Binance extends Exchange implements Runnable {
         add("DASH/ETH");
     }};
 
-    @Override
+      @Override
     protected String buildAPIRequest(String pair) {
         return "https://api.binance.com/api/v1/depth?symbol=" + casting(pair);
     }

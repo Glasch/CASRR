@@ -3,7 +3,10 @@ package exchanges;
 import model.Order;
 import model.OrderType;
 import model.Pair;
+import model.Tradable;
+import org.apache.http.NameValuePair;
 import org.apache.http.auth.AuthenticationException;
+import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import services.ConnectionManager;
@@ -14,7 +17,7 @@ import java.util.*;
 /**
  * Copyright (c) Anton on 17.10.2018.
  */
-public class Hitbtc extends Exchange implements Runnable {
+public class Hitbtc extends Exchange implements Runnable, Tradable {
     private BigDecimal takerTax = BigDecimal.valueOf(0.001);
     private Map<String, Pair> market = new HashMap<>();
     private List<String> pairs = new ArrayList<String>() {{
@@ -53,6 +56,9 @@ public class Hitbtc extends Exchange implements Runnable {
         add("TRX/ETH");
         add("LTC/ETH");
     }};
+    private static final String API_URL = "https://api.hitbtc.com/api/2/";
+    private static final String LOGIN = "3f6ffb7a7095445a498c52f66d5192b2";
+    private static final String PASSWORD = "110e4b1bd2426cf05039c6db53c265ab";
 
     @Override
     protected String buildAPIRequest(String pair) {
@@ -86,10 +92,15 @@ public class Hitbtc extends Exchange implements Runnable {
         return orders;
     }
 
-    public static BigDecimal getCurrencyBalance(String currency) throws AuthenticationException {
-        JSONArray jsonArray = ConnectionManager.getHitBtcBalanceJsonArray("https://api.hitbtc.com/api/2/trading/balance",
-                "3f6ffb7a7095445a498c52f66d5192b2",
-                "110e4b1bd2426cf05039c6db53c265ab");
+
+
+    /* Trading API */
+
+    @Override
+    public BigDecimal getBalance(String currency) {
+        JSONArray jsonArray = ConnectionManager.sendBasicGetRequest(API_URL + "trading/balance",
+                LOGIN,
+                PASSWORD);
         for (Object currencyInfo : jsonArray) {
             if (currencyInfo instanceof JSONObject){
                 if (((JSONObject) currencyInfo).get("currency").equals(currency)){
@@ -97,10 +108,66 @@ public class Hitbtc extends Exchange implements Runnable {
                 }
             }
         }
+
         throw new IllegalStateException("unexpected error getting HitBTC data");
+
     }
 
+    @Override
+    public String createOrder(String side, String type, String pair, BigDecimal quantity, BigDecimal price) {
 
+        ArrayList<NameValuePair> postParameters;
+        postParameters = new ArrayList<NameValuePair>();
+        postParameters.add(new BasicNameValuePair("side", side));
+        postParameters.add(new BasicNameValuePair("symbol", pair));
+        postParameters.add(new BasicNameValuePair("type", type));
+        postParameters.add(new BasicNameValuePair("quantity", quantity.toString()));
+        if (price != null) {
+            postParameters.add(new BasicNameValuePair("price", price.toString()));
+        }
+
+        JSONObject jsonObject = ConnectionManager.sendBasicPostRequest(API_URL + "order",
+                postParameters,
+                LOGIN,
+                PASSWORD);
+
+        return jsonObject.getString("clientOrderId");
+
+        //throw new IllegalStateException(jsonObject.getJSONObject("error").getString("message"));
+        //TODO: repeat createOrder, notify
+    }
+
+    @Override
+    public void cancelAllOrders(String pair) {
+        ConnectionManager.sendBasicDeleteRequest(API_URL + "order?symbol=" + pair,
+                LOGIN,
+                PASSWORD);
+    }
+
+    @Override
+    public void cancelAllOrders() {
+        ConnectionManager.sendBasicDeleteRequest(API_URL + "order",
+                LOGIN,
+                PASSWORD);
+    }
+
+    @Override
+    public void cancelOrder(String id) {
+        ConnectionManager.sendBasicDeleteRequest(API_URL + "order/" + id,
+                LOGIN,
+                PASSWORD);
+
+    }
+
+    @Override
+    public void getActiveOrders(String pair) {
+
+    }
+
+    @Override
+    public void getActiveOrders() {
+
+    }
 
     @Override
     protected String casting(String pair) {
