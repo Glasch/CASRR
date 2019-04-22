@@ -152,21 +152,23 @@ public class Hitbtc extends Exchange implements Runnable, Tradable {
     }
 
     @Override
-    public void cancelOrder(String id) {
+    public boolean cancelOrder(String id) {
         ConnectionManager.sendBasicDeleteRequest(API_URL + "order/" + id,
                 LOGIN,
                 PASSWORD);
 
-    }
-
-    @Override
-    public void getActiveOrders(String pair) {
+        return true;
 
     }
 
     @Override
-    public void getActiveOrders() {
+    public HashMap<Integer, JSONObject> getActiveOrders(String pair) {
+        return null;
+    }
 
+    @Override
+    public HashMap<Integer, JSONObject> getActiveOrders() {
+        return null;
     }
 
     @Override
