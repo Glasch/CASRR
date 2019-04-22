@@ -62,7 +62,7 @@ public class YobitUTest extends TestCase  {
 
     public void testMarketOrder(){
         Yobit yobit = new Yobit();
-        String res = yobit.createOrder("buy", "market", "BTC/USD", BigDecimal.valueOf(0.001), null);
+        String res = yobit.createOrder("sell", "market", "BTC/USD", BigDecimal.valueOf(0.00229830), null);
         System.out.println();
     }
 

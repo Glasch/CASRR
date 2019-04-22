@@ -121,7 +121,19 @@ public class Yobit extends Exchange implements Runnable, Tradable {
         return balance;
     }
 
-    @Override
+    private boolean isOrderClosed(String orderId) throws Exception {
+        String data = "method=OrderInfo&nonce=" + genNonce() + "&order_id=" + orderId;
+        JSONObject httpResponse = ConnectionManager.sendPostRequest(API_URL, data, prepareAuthHeaders(data));
+
+
+        if ( httpResponse.getInt("success") != 1){
+            throw new Exception("status: error");
+        }
+
+        return httpResponse.getJSONObject("return").getJSONObject(orderId).getInt("status") == 1;
+
+    }
+
     public String createOrder(String side, String type, String pair, BigDecimal quantity, BigDecimal price) {
         JSONObject httpResponse = null;
         Integer status;
@@ -158,16 +170,19 @@ public class Yobit extends Exchange implements Runnable, Tradable {
                         throw new Exception("status: error");
                     }
 
-                    BigDecimal amountBought =  httpResponse.getJSONObject("return").getBigDecimal("received");
+                   // BigDecimal amountBought =  httpResponse.getJSONObject("return").getBigDecimal("received");
 
-                    if ( amountBought.compareTo(amountToBuy) != 0 ){
-                        cancelOrder(httpResponse.getJSONObject("return").getBigDecimal("order_id").toString());
+                    String orderId = httpResponse.getJSONObject("return").getBigDecimal("order_id").toString();
 
 
+                    if ( !isOrderClosed(orderId) ){
+                        cancelOrder(orderId);
                     }
-                    BigDecimal amountLeft = quantity.subtract(amountBought);
 
-                    System.out.println("Planned to Buy: " + amountToBuy + " Sold " + amountBought + " with price "
+
+                    BigDecimal amountLeft = quantity.subtract(amountToBuy);
+
+                    System.out.println("Planned to Buy: " + amountToBuy + " Sold " + amountToBuy + " with price "
                             + orders.get(0).getPrice() + " amountLeft: " + amountLeft);
                     System.out.println("Amount Left " + quantity.subtract(amountToBuy));
 
@@ -184,8 +199,8 @@ public class Yobit extends Exchange implements Runnable, Tradable {
                     String data = "method=Trade&nonce=" + genNonce() + "&pair=" + casting(pair) + "&type=" + side +
                             "&rate=" + orders.get(0).getPrice() + "&amount=" + amountToSell;
 
-                    System.out.println("Sold " + amountToSell + " with price " + orders.get(0).getPrice());
-                    System.out.println("Amount Left " + quantity.subtract(amountToSell));
+
+
                     httpResponse = ConnectionManager.sendPostRequest(API_URL, data, prepareAuthHeaders(data));
 
                     status = httpResponse.getInt("success");
@@ -194,7 +209,20 @@ public class Yobit extends Exchange implements Runnable, Tradable {
                         throw new Exception("status: error");
                     }
 
-                    BigDecimal amountLeft = httpResponse.getJSONObject("return").getBigDecimal("remains");
+
+                    String orderId = httpResponse.getJSONObject("return").getBigDecimal("order_id").toString();
+
+
+                    if ( !isOrderClosed(orderId) ){
+                        cancelOrder(orderId);
+                    }
+
+
+                    BigDecimal amountLeft = quantity.subtract(amountToSell);
+
+                    System.out.println("Planned to Sell: " + amountToSell + " Sold " + amountToSell + " with price "
+                            + orders.get(0).getPrice() + " amountLeft: " + amountLeft);
+                    System.out.println("Amount Left " + quantity.subtract(amountToSell));
 
                     createOrder(side, type, pair, amountLeft, null);
 
@@ -211,12 +239,13 @@ public class Yobit extends Exchange implements Runnable, Tradable {
                 throw new Exception("status: error");
             }
 
-            return httpResponse.getJSONObject("return").getString("order_id");
+            return httpResponse.getJSONObject("return").getBigDecimal("order_id").toString();
         } catch (Exception e){
             System.out.println("Parsing Trade response failed. Response:");
-            System.out.println(httpResponse.toString());
+            System.out.println(httpResponse);
             System.out.println("Error Message:");
             System.out.println(e.getMessage());
+            System.out.println(Arrays.toString(e.getStackTrace()));
             return null;
         }
 
