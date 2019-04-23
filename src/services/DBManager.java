@@ -16,9 +16,9 @@ import java.util.*;
  */
 public class DBManager {
     private Updater updater;
-    private String url = "jdbc:postgresql://localhost:5432/postgres";
+    private String url = "jdbc:postgresql://localhost:5432/cas";
     private String login = "postgres";
-    private String password = "N6d3bhjhYG7C";
+    private String password = "tMXVuD8JrJ8egE";
 
     public DBManager(Updater updater) {
         this.updater = updater;

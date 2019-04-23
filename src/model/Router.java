@@ -22,7 +22,7 @@ public class Router {
 
         masterRoutes = findRoutes(exchanges, allPairs);
         for (Route route : masterRoutes) {
-            route.filterDeals(BigDecimal.ZERO);
+            route.filterDeals(route.getExchangeFrom().getTakerTax().add(route.getExchangeTo().getTakerTax()));
             route.calcRouteValueInDollars();
             route.filterZeroAmountDeals();
         }

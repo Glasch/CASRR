@@ -32,21 +32,21 @@ public class Yobit extends Exchange implements Runnable, Tradable {
     private static final String SECRET_KEY = "5fdd666e83bb81577181a074a8062510";
 
     private ArrayList<String> pairs = new ArrayList<String>() {{
-        add("ETH/USD");
-        add("ETH/BTC");
-        add("DASH/BTC");
-        add("ZEC/BTC");
-        add("LSK/BTC");
-        add("LTC/BTC");
-        add("WAVES/BTC");
-        add("DOGE/BTC");
-        add("XRP/BTC");
-//        add("BTC/USD");
+//        add("ETH/USD");
+//        add("ETH/BTC");
+//        add("DASH/BTC");
+//        add("ZEC/BTC");
+//        add("LSK/BTC");
+//        add("LTC/BTC");
+//        add("WAVES/BTC");
+//        add("DOGE/BTC");
+//        add("XRP/BTC");
+        add("BTC/USD");
     }};
 
     @Override
     protected String buildAPIRequest(String pair) {
-        return "https://yobit.io/api/3/depth/" + casting(pair) + "?limit=10";
+        return "https://yobit.net/api/3/depth/" + casting(pair) + "?limit=10";
     }
 
     private String genNonce(){
