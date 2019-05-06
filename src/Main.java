@@ -31,13 +31,14 @@ public class Main {
                 resultingRoute.calcRouteSpread(resultingRoute.getDeals());
             }
             Trader trader = new Trader();
-            System.out.println(trader.getAcceptedRoutes().size());
-            for (Route route : trader.getAcceptedRoutes()) {
-                System.out.println(route);
-                System.out.println();
-            }
             for (Route route : router.getResultingRoutes()) {
-                trader.makeDeal(route);
+//                System.out.println(route.getDeals().size());
+                route.filterDeals(route.getExchangeFrom().getTakerTax().add(route.getExchangeTo().getTakerTax()));
+//                System.out.println(route.getDeals().size());
+
+                trader.makeRealMoneyDeal(route);
+
+
             }
             for (Exchange exchange : updater.getExchanges()) {
                 exchange.getMarket().clear();

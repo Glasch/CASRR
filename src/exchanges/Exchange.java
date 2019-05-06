@@ -5,13 +5,14 @@ import org.json.JSONObject;
 import services.ConnectionManager;
 
 import java.math.BigDecimal;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 /**
  * Copyright (c) Anton on 23.10.2018.
  */
-public abstract class Exchange implements Runnable {
+public abstract class Exchange implements Runnable, Tradable {
     BigDecimal takerTax;
     private ExchangeAccount exchangeAccount;
     private boolean isMarketValid = true;
@@ -59,6 +60,41 @@ public abstract class Exchange implements Runnable {
             }
         }
         validateMarket(getMarket());
+    }
+
+    @Override
+    public BigDecimal getBalance(String currency) {
+        return null;
+    }
+
+    @Override
+    public String createOrder(String side, String type, String pair, BigDecimal quantity, BigDecimal price) {
+        return null;
+    }
+
+    @Override
+    public void cancelAllOrders(String pair) {
+
+    }
+
+    @Override
+    public void cancelAllOrders() {
+
+    }
+
+    @Override
+    public boolean cancelOrder(String id) {
+        return false;
+    }
+
+    @Override
+    public HashMap<Integer, JSONObject> getActiveOrders(String pair) {
+        return null;
+    }
+
+    @Override
+    public HashMap<Integer, JSONObject> getActiveOrders() {
+        return null;
     }
 
     String getJSONKey(OrderType orderType) {

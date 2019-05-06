@@ -1,6 +1,7 @@
 package model;
 
 
+import com.sun.xml.internal.bind.v2.TODO;
 import exchanges.Exchange;
 import services.Updater;
 
@@ -22,7 +23,7 @@ public class Router {
 
         masterRoutes = findRoutes(exchanges, allPairs);
         for (Route route : masterRoutes) {
-            route.filterDeals(route.getExchangeFrom().getTakerTax().add(route.getExchangeTo().getTakerTax()));
+            route.filterDeals(BigDecimal.ZERO);
             route.calcRouteValueInDollars();
             route.filterZeroAmountDeals();
         }

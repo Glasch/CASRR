@@ -1,5 +1,7 @@
 package model;
 
+import exchanges.Exchange;
+
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
@@ -8,7 +10,59 @@ import java.util.List;
  * Copyright (c) Anton on 06.12.2018.
  */
 public class Trader {
-   private List<Route> acceptedRoutes = new ArrayList <>();
+    private List<Route> acceptedRoutes = new ArrayList<>();
+
+    public void makeRealMoneyDeal(Route route) {
+        String marketCurrency = route.getPairName().split("/")[0];
+        String dealCurrency = route.getPairName().split("/")[1];
+        Exchange exchangeFrom = route.getExchangeFrom();
+        Exchange exchangeTo = route.getExchangeTo();
+        BigDecimal exchangeFromMarketBalance = exchangeFrom.getBalance(marketCurrency);
+        BigDecimal exchangeToDealBalance = exchangeTo.getBalance(dealCurrency);
+
+        System.out.println(exchangeFrom + " " + exchangeFromMarketBalance + " " + marketCurrency);
+        System.out.println(exchangeFrom + " " + exchangeFrom.getBalance(dealCurrency) + " " + dealCurrency);
+        System.out.println(exchangeTo + " " + exchangeTo.getBalance(marketCurrency) + " " + marketCurrency);
+        System.out.println(exchangeTo + " " + exchangeToDealBalance + " " + dealCurrency);
+        System.out.println(route.getAmount());
+        System.out.println();
+
+        BigDecimal realAmount = findRealAmount(route, exchangeFromMarketBalance, exchangeToDealBalance);
+
+
+    }
+
+    private BigDecimal findRealAmount(Route route, BigDecimal exchangeFromMarketBalance, BigDecimal exchangeToDealBalance) {
+        BigDecimal realAmount = BigDecimal.ZERO;
+
+        /*
+        TODO
+        we should sort by desc
+         1. route.getEffectiveAmount()
+         2. exchangeFromMarketBalance
+         3. castExchangeToDealBalance 2 route.getEffectiveAmountCurrency()
+
+         Then return the lowest
+        */
+
+        ArrayList<BigDecimal> amounts = new ArrayList<>();
+        amounts.add(route.getAmount());
+        amounts.add(exchangeFromMarketBalance);
+        amounts.add(castDealBalanceToMarketCurrency(route,exchangeToDealBalance));
+
+        return realAmount;
+    }
+
+    private BigDecimal castDealBalanceToMarketCurrency(Route route, BigDecimal exchangeToDealBalance) {
+        BigDecimal res;
+
+        /*
+        in fact we should find how much market currency we can buy at exchangeTo trading exchangeToDealBalance
+         */
+
+
+        return null;
+    }
 
     public void makeDeal(Route route) {
 
@@ -27,8 +81,9 @@ public class Trader {
         acceptTax(route);
 
         route.calcRouteSpread(route.getSortedEVDeals());
-        if (route.getAmount().compareTo(BigDecimal.ZERO) > 0){
-        acceptedRoutes.add(route);}
+        if (route.getAmount().compareTo(BigDecimal.ZERO) > 0) {
+            acceptedRoutes.add(route);
+        }
     }
 
     private void calcTax(Deal deal) {
@@ -94,7 +149,7 @@ public class Trader {
         return route.getPairName().split("/")[1];
     }
 
-    public List <Route> getAcceptedRoutes() {
+    public List<Route> getAcceptedRoutes() {
         return acceptedRoutes;
     }
 }

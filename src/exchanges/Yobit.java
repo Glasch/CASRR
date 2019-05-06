@@ -102,7 +102,7 @@ public class Yobit extends Exchange implements Runnable, Tradable {
 
     @Override
     public BigDecimal getBalance(String currency) {
-        BigDecimal balance = null;
+        BigDecimal balance;
         String data = "method=getInfo&nonce=" + genNonce();
 
 
